@@ -39,6 +39,13 @@
 	{:else}
 		<div class="container">
 			<div class="list">
+				<button
+					class="item"
+					class:active={$order?.id === 'new'}
+					on:click={() => onItemClick({ id: 'new', customerId: '1234', items: [], status: 'pending' })}
+				>
+				<div class="name">Create Order</div>
+			</button>
 				{#each orders as _order, index}
 					<button
 						class="item"

@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { type Order } from '$lib/types/order';
+	import NewOrder from './new-order.svelte';
 
 	export let order: Order | undefined;
 </script>
 
 <div class="details">
-	{#if order}
+	{#if order?.id === 'new'}
+		<NewOrder />
+	{:else if order}
 		{#each order.items as item}
 			<div class="item">
 				<div class="item-header">
@@ -16,7 +19,7 @@
 			</div>
 		{/each}
 	{:else}
-		<h3>Pick order to view details</h3>
+		<h3>Create your own order or pick order to view details</h3>
 	{/if}
 </div>
 

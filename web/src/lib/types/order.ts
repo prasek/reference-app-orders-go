@@ -11,7 +11,7 @@ export interface OrderItem extends Item {
 
 export type OrderStatus =
 	| 'pending'
-	| 'processsing'
+	| 'processing'
 	| 'customerActionRequired'
 	| 'completed'
 	| 'cancelled';
@@ -59,19 +59,20 @@ export const order = writable<Order | undefined>();
 export const generateOrders = (quantity: number): Order[] => {
 	const orders = [];
 	for (let i = 0; i < quantity; i++) {
-		const shuffledItems = items.sort(() => 0.5 - Math.random());
+		const shuffledItems = shoes.sort(() => 0.5 - Math.random());
 		const n = Math.floor(Math.random() * 5) + 1;
 		const selected = shuffledItems.slice(0, n);
 		orders.push({
 			id: `A${i + 1}-${Date.now()}`,
 			customerId: '1234',
+			status: 'pending',
 			items: selected.map((item) => ({ ...item, quantity: Math.floor(Math.random() * 3) + 1 }))
 		});
 	}
 	return orders;
 };
 
-export const items: Item[] = [
+export const shoes: Item[] = [
 	{
 		sku: 'Nike Air Force Ones',
 		description:
