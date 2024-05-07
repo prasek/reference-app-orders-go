@@ -20,11 +20,6 @@
 	};
 </script>
 
-<svelte:head>
-	<title>Tora</title>
-	<meta name="description" content="Tora App" />
-</svelte:head>
-
 <div class="container">
 	<h1>{shipment.id}</h1>
 	<ShipmentDetails {shipment} {status} />

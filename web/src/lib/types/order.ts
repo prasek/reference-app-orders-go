@@ -2,10 +2,9 @@ import { writable } from 'svelte/store';
 
 export interface Item {
 	sku: string;
-	description: string;
+	description?: string;
 }
 export interface OrderItem extends Item {
-	sku: string;
 	quantity: number;
 }
 
@@ -79,6 +78,10 @@ export const shoes: Item[] = [
 			'The Nike Air Force Ones combines timeless style with modern comfort, featuring premium materials and cutting-edge technology for unmatched performance.'
 	},
 	{
+		sku: 'Adidas Superstar',
+		description: 'The Adidas Superstar is the shoe. The one you know. The one you love.'
+	},
+	{
 		sku: 'Adidas UltraBoost',
 		description:
 			'The Adidas UltraBoost combines timeless style with modern comfort, featuring premium materials and cutting-edge technology for unmatched performance.'
@@ -109,11 +112,6 @@ export const shoes: Item[] = [
 			'The Converse Chuck Taylor All Star combines timeless style with modern comfort, featuring premium materials and cutting-edge technology for unmatched performance.'
 	},
 	{
-		sku: 'Under Armour HOVR Sonic',
-		description:
-			'The Under Armour HOVR Sonic combines timeless style with modern comfort, featuring premium materials and cutting-edge technology for unmatched performance.'
-	},
-	{
 		sku: 'Jordan Air Jordan 1',
 		description:
 			'The Jordan Air Jordan 1 combines timeless style with modern comfort, featuring premium materials and cutting-edge technology for unmatched performance.'
@@ -124,14 +122,9 @@ export const shoes: Item[] = [
 			'The Asics GEL-Kayano combines timeless style with modern comfort, featuring premium materials and cutting-edge technology for unmatched performance.'
 	},
 	{
-		sku: 'Nike Air Force Ones',
+		sku: 'Nike Air Force Twos',
 		description:
-			'A second iteration of the classic, the Nike Air Force Ones Model 11 is redesigned for the modern athlete, offering enhanced cushioning and durability.'
-	},
-	{
-		sku: 'Adidas UltraBoost',
-		description:
-			'Adidas UltraBoost Model 12 brings you closer to the ground for a more responsive feel, ideal for runners seeking a blend of support and speed.'
+			'A second iteration of the classic, the Nike Air Force Twos Model 11 is redesigned for the modern athlete, offering enhanced cushioning and durability.'
 	},
 	{
 		sku: 'Reebok Classic Leather Black',
@@ -139,22 +132,12 @@ export const shoes: Item[] = [
 			"Reebok's Classic Leather Model 13 is the epitome of retro chic, offering unparalleled comfort and a sleek design for everyday wear."
 	},
 	{
-		sku: 'Puma Suede Classic',
-		description:
-			'The Puma Suede Classic Model 14 updates the iconic design with advanced materials for better wearability and style.'
-	},
-	{
-		sku: 'New Balance 574',
-		description:
-			'This latest version of the New Balance 574, Model 15, combines heritage styling with modern technology for an improved fit and function.'
-	},
-	{
 		sku: 'Vans New Skool',
 		description:
 			'Vans New Skool Model 16 reintroduces the classic skate shoe with updated features for enhanced performance and comfort.'
 	},
 	{
-		sku: 'Converse Chuck Taylor All Star',
+		sku: 'Converse Chuck Taylor Model 17',
 		description:
 			'Model 17 of the Converse Chuck Taylor All Star elevates the iconic silhouette with premium materials and an improved insole for all-day comfort.'
 	},

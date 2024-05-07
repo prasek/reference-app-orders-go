@@ -6,11 +6,6 @@
 	$: ({ shipments } = data);
 </script>
 
-<svelte:head>
-	<title>Tora</title>
-	<meta name="description" content="Tora App" />
-</svelte:head>
-
 <section>
 	<nav>
 		<h1>Shipments</h1>

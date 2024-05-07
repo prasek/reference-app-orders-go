@@ -6,8 +6,8 @@
 </script>
 
 <div class="details">
-	{#if order?.id === 'new'}
-		<NewOrder />
+	{#if order?.id.includes('CUSTOM')}
+		<NewOrder bind:order />
 	{:else if order}
 		{#each order.items as item}
 			<div class="item">
@@ -19,7 +19,7 @@
 			</div>
 		{/each}
 	{:else}
-		<h3>Create your own order or pick order to view details</h3>
+		<h3>Create your own custom order or pick order to view details</h3>
 	{/if}
 </div>
 

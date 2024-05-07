@@ -4,6 +4,9 @@
 	import { generateOrders, order, type Order } from '$lib/types/order';
 	import Logo from '$lib/components/logo.svelte';
 
+	const orders = generateOrders(20);
+	let loading = false;
+
 	const onItemClick = async (order: Order) => {
 		if (order.id === $order?.id) {
 			$order = undefined;
@@ -22,16 +25,7 @@
 			}, 1000);
 		}
 	};
-
-	const orders = generateOrders(20);
-
-	let loading = false;
 </script>
-
-<svelte:head>
-	<title>Tora</title>
-	<meta name="description" content="Tora App" />
-</svelte:head>
 
 <section>
 	{#if loading}
@@ -41,11 +35,17 @@
 			<div class="list">
 				<button
 					class="item"
-					class:active={$order?.id === 'new'}
-					on:click={() => onItemClick({ id: 'new', customerId: '1234', items: [], status: 'pending' })}
+					class:active={$order?.id.includes('CUSTOM')}
+					on:click={() =>
+						onItemClick({
+							id: `CUSTOM-${Date.now()}`,
+							customerId: '1234',
+							items: [],
+							status: 'pending'
+						})}
 				>
-				<div class="name">Create Order</div>
-			</button>
+					<div class="name">Custom Order</div>
+				</button>
 				{#each orders as _order, index}
 					<button
 						class="item"
@@ -56,7 +56,7 @@
 					</button>
 				{/each}
 			</div>
-			<OrderDetails order={$order} />
+			<OrderDetails bind:order={$order} />
 		</div>
 		<div class="container submit">
 			<button class="submit-button" disabled={!$order} on:click={onSubmit}>Submit</button>

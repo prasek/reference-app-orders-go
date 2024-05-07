@@ -7,11 +7,6 @@
 	$: ({ orders } = data);
 </script>
 
-<svelte:head>
-	<title>Tora</title>
-	<meta name="description" content="Tora App" />
-</svelte:head>
-
 <section>
 	<nav>
 		<h1>Orders</h1>
