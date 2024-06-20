@@ -326,12 +326,6 @@ func (f *Fulfillment) processPayment(ctx workflow.Context) error {
 
 	var charge ChargeResult
 
-	ctx = workflow.WithActivityOptions(ctx,
-		workflow.ActivityOptions{
-			StartToCloseTimeout: 30 * time.Second,
-		},
-	)
-
 	f.Payment = &PaymentStatus{Status: PaymentStatusPending}
 
 	var chargeKey string
@@ -353,7 +347,9 @@ func (f *Fulfillment) processPayment(ctx workflow.Context) error {
 			Items:          billingItems,
 			IdempotencyKey: chargeKey,
 		},
-		workflow.NexusOperationOptions{})
+		workflow.NexusOperationOptions{
+			ScheduleToCloseTimeout: 30 * time.Second,
+		})
 
 	if err := c.Get(ctx, &charge); err != nil {
 		f.Payment.Status = PaymentStatusFailed
