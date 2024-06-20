@@ -21,7 +21,10 @@ type orderImpl struct {
 
 // Nexus Endpoint names from the Nexus API Registry
 const NexusBillingEndpointName = "billing"
-const NexusShipmentsEndpointName = "shipment"
+const NexusShipmentEndpointName = "shipment"
+const NexusOrderEndpointName = "order" // for callbacks to the orders service
+
+const shipmentNotificationSignalName = "shipmentNotification"
 
 // Aggressively low for demo purposes.
 const customerActionTimeout = 30 * time.Second
@@ -264,10 +267,10 @@ func (wf *orderImpl) waitForCustomer(ctx workflow.Context) (string, error) {
 }
 
 func (wf *orderImpl) handleShipmentStatusUpdates(ctx workflow.Context) {
-	ch := workflow.GetSignalChannel(ctx, shipment.ShipmentStatusUpdatedSignalName)
+	ch := workflow.GetSignalChannel(ctx, shipmentNotificationSignalName)
 
 	for {
-		var signal shipment.ShipmentStatusUpdatedSignal
+		var signal shipment.ShipmentStatusNotification
 		_ = ch.Receive(ctx, &signal)
 		for _, f := range wf.fulfillments {
 			if f.ID == signal.ShipmentID {
@@ -388,13 +391,19 @@ func (f *Fulfillment) processShipment(ctx workflow.Context) error {
 	}
 
 	// Use Nexus Operation instead of Child Workflow
-	shipmentsService := workflow.NewNexusClient(NexusShipmentsEndpointName, shipment.ShipmentServiceName)
+	shipmentsService := workflow.NewNexusClient(NexusShipmentEndpointName, shipment.ShipmentServiceName)
 
 	err := shipmentsService.ExecuteOperation(ctx,
 		shipment.ProcessShipmentOperationName,
 		shipment.ShipmentInput{
-			RequestorWID: workflow.GetInfo(ctx).WorkflowExecution.ID,
+			//RequestorWID: workflow.GetInfo(ctx).WorkflowExecution.ID,
 
+			NotificationCallback: shipment.NotificationCallback{
+				EndpointName:  NexusOrderEndpointName,
+				ServiceName:   OrderServiceName,
+				OperationName: ShipmentNotificationOperationName,
+				CallerID:      workflow.GetInfo(ctx).WorkflowExecution.ID,
+			},
 			ID:    f.ID,
 			Items: shippingItems,
 		},

@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/nexus-rpc/sdk-go/nexus"
+	"github.com/temporalio/reference-app-orders-go/app/shipment"
 	"go.temporal.io/api/enums/v1"
 	"go.temporal.io/api/serviceerror"
 	"go.temporal.io/sdk/client"
@@ -194,6 +196,19 @@ type OrderResult struct {
 	Status string `json:"status"`
 }
 
+// Nexus Order Service
+const OrderServiceName = "order"
+const ShipmentNotificationOperationName = "shipmentNotification"
+
+type NexusHandlers struct{}
+
+var nh NexusHandlers
+
+func (nh *NexusHandlers) handleShippingUpdateNotification(ctx context.Context, c client.Client, input shipment.ShipmentStatusNotification, soo nexus.StartOperationOptions) (nexus.NoValue, error) {
+	return nil, c.SignalWorkflow(ctx, input.CallerID, "", shipmentNotificationSignalName, input)
+}
+
+// HTTP API
 type handlers struct {
 	temporal client.Client
 	db       *sqlx.DB
