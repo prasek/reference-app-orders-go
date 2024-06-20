@@ -1,4 +1,46 @@
-# Temporal Reference Application: Order Management System (Go)
+# Nexus demo
+
+Launch the `Debug Server with SQLite` from github.com/temporalio/temporal `main`
+
+Then spin up the environment:
+```
+./setup.sh
+cd deployments
+docker compose up
+```
+
+### Start a workflow to process `Order 1`
+1. open http://localhost:3000
+1. click `Customer` role
+1. click `New Order`
+1. select Order 1
+1. click `Submit Order`
+
+### Observe the workflow state in a new terminal
+
+using the provided `./bin/temporal` CLI (from github.com/temporalio/cli@nexus)
+
+```
+./bin/temporal workflow list
+
+./bin/temporal workflow show -w <order workflow>
+
+```
+1. ensure `NexusOperationScheduled` is reported in the caller's workflow history
+   - it should start the underlying `Charge` workflow
+
+1. ensure `NexusOperationStarted` is reported in the caller's workflow history
+   - verify the `Charge` workflow completes successfully
+
+1. ensure `NexusOperationCompleted` is reported in the Order workflow history
+   - should indicate the underlying `Charge` workflow was completed successfully
+
+### Observe Temporal server logs for additional info
+1. ensure callback is delivered
+
+---------------------------------
+
+# Temporal Reference Application: Order Management System
 
 ![OMS logo](docs/images/oms-logo.png)
 

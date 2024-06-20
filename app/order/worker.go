@@ -14,7 +14,7 @@ func RunWorker(ctx context.Context, config config.AppConfig, client client.Clien
 	w := worker.New(client, TaskQueue, worker.Options{})
 
 	w.RegisterWorkflow(Order)
-	w.RegisterActivity(&Activities{BillingURL: config.BillingURL, OrderURL: config.OrderURL})
+	w.RegisterActivity(&Activities{OrderURL: config.OrderURL})
 
 	return w.Run(temporalutil.WorkerInterruptFromContext(ctx))
 }
