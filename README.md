@@ -5,8 +5,6 @@ Launch the `Debug Server with SQLite` from github.com/temporalio/temporal `main`
 Then spin up the environment:
 ```
 ./setup.sh
-cd deployments
-docker compose up
 ```
 
 ### Start a workflow to process `Order 1`
@@ -22,10 +20,14 @@ using the provided `./bin/temporal` CLI (from github.com/temporalio/cli@nexus)
 
 ```
 ./bin/temporal workflow list
+```
 
-./bin/temporal workflow show -w <order workflow>
+#### Look at history for the `Order` workflow
 
 ```
+./bin/temporal workflow show -w <order workflow>
+```
+
 1. ensure `NexusOperationScheduled` is reported in the caller's workflow history
    - it should start the underlying `Charge` workflow
 
