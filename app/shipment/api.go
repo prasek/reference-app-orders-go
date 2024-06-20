@@ -9,9 +9,14 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/nexus-rpc/sdk-go/nexus"
 	"go.temporal.io/api/serviceerror"
 	"go.temporal.io/sdk/client"
+	"go.temporal.io/sdk/temporalnexus"
 )
+
+const ShipmentServiceName = "shipment"
+const ProcessShipmentOperationName = "processShipment"
 
 // TaskQueue is the default task queue for the Shipment system.
 const TaskQueue = "shipments"
@@ -54,6 +59,15 @@ type ListShipmentEntry struct {
 	ID     string `json:"id"`
 	Status string `json:"status"`
 }
+
+// Async Nexus Operation Handler to replace ChildWorkflow(Shipment)
+var ProcessShipmentOperation = temporalnexus.NewWorkflowRunOperation(
+	ProcessShipmentOperationName,
+	Shipment,
+	func(ctx context.Context, input *ShipmentInput, soo nexus.StartOperationOptions) (client.StartWorkflowOptions, error) {
+		return client.StartWorkflowOptions{ID: ShipmentWorkflowID(input.ID)}, nil
+	},
+)
 
 // Router implements the http.Handler interface for the Shipment API
 func Router(client client.Client, db *sqlx.DB, logger *slog.Logger) http.Handler {
