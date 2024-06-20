@@ -19,9 +19,12 @@ func TestOrderWorkflow(t *testing.T) {
 	var a *order.Activities
 
 	env.RegisterActivity(a.ReserveItems)
+
+	/* TODO: add Nexus test support
 	env.OnActivity(a.Charge, mock.Anything, mock.Anything).Return(func(ctx context.Context, input *order.ChargeInput) (*order.ChargeResult, error) {
 		return &order.ChargeResult{Success: true}, nil
 	})
+	*/
 	env.OnActivity(a.UpdateOrderStatus, mock.Anything, mock.Anything).Return(func(ctx context.Context, input *order.OrderStatusUpdate) error {
 		return nil
 	})
@@ -56,9 +59,12 @@ func TestOrderShipmentStatus(t *testing.T) {
 	var a *order.Activities
 
 	env.RegisterActivity(a.ReserveItems)
+
+	/* TODO: add Nexus test support
 	env.OnActivity(a.Charge, mock.Anything, mock.Anything).Return(func(ctx context.Context, input *order.ChargeInput) (*order.ChargeResult, error) {
 		return &order.ChargeResult{Success: true}, nil
 	})
+	*/
 	env.OnActivity(a.UpdateOrderStatus, mock.Anything, mock.Anything).Return(func(ctx context.Context, input *order.OrderStatusUpdate) error {
 		return nil
 	})
@@ -109,9 +115,12 @@ func TestOrderAmendWithUnavailableItems(t *testing.T) {
 	var a *order.Activities
 
 	env.RegisterActivity(a.ReserveItems)
+
+	/* TODO: add Nexus test support
 	env.OnActivity(a.Charge, mock.Anything, mock.Anything).Return(func(ctx context.Context, input *order.ChargeInput) (*order.ChargeResult, error) {
 		return &order.ChargeResult{Success: true}, nil
 	})
+	*/
 	env.OnActivity(a.UpdateOrderStatus, mock.Anything, mock.Anything).Return(func(ctx context.Context, input *order.OrderStatusUpdate) error {
 		return nil
 	})

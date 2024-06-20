@@ -177,7 +177,7 @@ func init() {
 		"ID of key used to encrypt payload data (optional)")
 
 	workerCmd.PersistentFlags().StringSliceVarP(&workers, "services", "s", []string{"order", "shipment", "billing"}, "Workers to run")
-	apiCmd.PersistentFlags().StringSliceVarP(&apis, "services", "s", []string{"order", "shipment", "billing", "fraud"}, "API Servers to run")
+	apiCmd.PersistentFlags().StringSliceVarP(&apis, "services", "s", []string{"order", "shipment", "fraud"}, "API Servers to run")
 
 	codecCmd.PersistentFlags().IntVarP(&codecPort, "port", "p", defaultCodecPort,
 		"Port number on which the Codec Server will listen for requests")
