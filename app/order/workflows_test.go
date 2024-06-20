@@ -68,18 +68,22 @@ func TestOrderShipmentStatus(t *testing.T) {
 	env.OnActivity(a.UpdateOrderStatus, mock.Anything, mock.Anything).Return(func(ctx context.Context, input *order.OrderStatusUpdate) error {
 		return nil
 	})
-	env.OnWorkflow(shipment.Shipment, mock.Anything, mock.Anything).Return(func(ctx workflow.Context, input *shipment.ShipmentInput) (*shipment.ShipmentResult, error) {
-		env.SignalWorkflow(
-			shipment.ShipmentStatusUpdatedSignalName,
-			shipment.ShipmentStatusUpdatedSignal{
-				ShipmentID: input.ID,
-				Status:     shipment.ShipmentStatusDelivered,
-				UpdatedAt:  env.Now(),
-			},
-		)
 
-		return &shipment.ShipmentResult{CourierReference: "test"}, nil
-	}).Times(2)
+	/*
+		TODO: Imporved Nexus test mock support
+		env.OnWorkflow(shipment.Shipment, mock.Anything, mock.Anything).Return(func(ctx workflow.Context, input *shipment.ShipmentInput) (*shipment.ShipmentResult, error) {
+			env.SignalWorkflow(
+				shipment.ShipmentStatusUpdatedSignalName,
+				shipment.ShipmentStatusUpdatedSignal{
+					ShipmentID: input.ID,
+					Status:     shipment.ShipmentStatusDelivered,
+					UpdatedAt:  env.Now(),
+				},
+			)
+
+			return &shipment.ShipmentResult{CourierReference: "test"}, nil
+		}).Times(2)
+	*/
 
 	orderInput := order.OrderInput{
 		ID:         "1234",
