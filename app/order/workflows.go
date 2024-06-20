@@ -305,6 +305,12 @@ func (f *Fulfillment) process(ctx workflow.Context) error {
 	return nil
 }
 
+// ChargeInput is the input to the Charge activity.
+type ChargeInput = billing.ChargeInput
+
+// ChargeResult is the result of the Charge activity.
+type ChargeResult = billing.ChargeResult
+
 func (f *Fulfillment) processPayment(ctx workflow.Context) error {
 	var billingItems []billing.Item
 	for _, i := range f.Items {
@@ -330,15 +336,18 @@ func (f *Fulfillment) processPayment(ctx workflow.Context) error {
 		return err
 	}
 
-	c := workflow.ExecuteActivity(ctx,
-		a.Charge,
+	// Replace ExecuteActivity with ExecuteOperation
+	billingService := workflow.NewNexusClient("billing", billing.BillingServiceName)
+	c := billingService.ExecuteOperation(ctx,
+		billing.ChargeOperationName,
 		&ChargeInput{
 			CustomerID:     f.customerID,
 			Reference:      f.ID,
 			Items:          billingItems,
 			IdempotencyKey: chargeKey,
 		},
-	)
+		workflow.NexusOperationOptions{})
+
 	if err := c.Get(ctx, &charge); err != nil {
 		f.Payment.Status = PaymentStatusFailed
 		return err

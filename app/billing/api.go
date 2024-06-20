@@ -2,15 +2,17 @@ package billing
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"log/slog"
-	"net/http"
 
 	"github.com/google/uuid"
-	"go.temporal.io/api/enums/v1"
+	"github.com/nexus-rpc/sdk-go/nexus"
 	"go.temporal.io/sdk/client"
+	"go.temporal.io/sdk/temporalnexus"
 )
+
+// Nexus Billing Service
+const BillingServiceName = "billing"
+const ChargeOperationName = "charge"
 
 // TaskQueue is the default task queue for the Billing system.
 const TaskQueue = "billing"
@@ -70,21 +72,6 @@ type ChargeCustomerResult struct {
 	AuthCode string `json:"authCode"`
 }
 
-type handlers struct {
-	temporal client.Client
-	logger   *slog.Logger
-}
-
-// Router implements the http.Handler interface for the Billing API
-func Router(c client.Client, logger *slog.Logger) http.Handler {
-	r := http.NewServeMux()
-	h := handlers{temporal: c, logger: logger}
-
-	r.HandleFunc("POST /charge", h.handleCharge)
-
-	return r
-}
-
 // ChargeWorkflowID returns the workflow ID for a Charge workflow.
 func ChargeWorkflowID(input ChargeInput) string {
 	// If an idempotency key is provided, use it as the workflow ID.
@@ -99,45 +86,11 @@ func ChargeWorkflowID(input ChargeInput) string {
 	return fmt.Sprintf("Charge:%s", key)
 }
 
-func (h *handlers) handleCharge(w http.ResponseWriter, r *http.Request) {
-	var input ChargeInput
-
-	err := json.NewDecoder(r.Body).Decode(&input)
-	if err != nil {
-		h.logger.Error("Failed to decode charge input", "error", err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// Start the Charge workflow.
-	// If the workflow is already running, or is finished but still within retention period, this will return the existing workflow.
-	// If an idempotency key was provided, this provides idempotency guarantees for the Charge operation.
-	wf, err := h.temporal.ExecuteWorkflow(context.Background(),
-		client.StartWorkflowOptions{
-			TaskQueue:             TaskQueue,
-			ID:                    ChargeWorkflowID(input),
-			WorkflowIDReusePolicy: enums.WORKFLOW_ID_REUSE_POLICY_REJECT_DUPLICATE,
-		},
-		Charge,
-		&input,
-	)
-	if err != nil {
-		h.logger.Error("Failed to start charge workflow", "error", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	var result ChargeResult
-	err = wf.Get(r.Context(), &result)
-	if err != nil {
-		h.logger.Error("Failed to get charge result", "error", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(result)
-	if err != nil {
-		h.logger.Error("Failed to encode charge result", "error", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
+// Async Nexus Operation Handler to replace handleCharge
+var ChargeOperation = temporalnexus.NewWorkflowRunOperation(
+	ChargeOperationName,
+	Charge,
+	func(ctx context.Context, input *ChargeInput, soo nexus.StartOperationOptions) (client.StartWorkflowOptions, error) {
+		return client.StartWorkflowOptions{ID: ChargeWorkflowID(*input)}, nil
+	},
+)

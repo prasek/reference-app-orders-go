@@ -5,7 +5,6 @@ services:
       target: oms-worker
     environment:
       - TEMPORAL_ADDRESS=host.docker.internal:7233
-      - BILLING_API_URL=http://api:8081
       - ORDER_API_URL=http://api:8082
       - SHIPMENT_API_URL=http://api:8083
       - FRAUD_API_URL=http://api:8084
