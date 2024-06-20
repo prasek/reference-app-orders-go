@@ -19,6 +19,10 @@ type orderImpl struct {
 	logger       log.Logger
 }
 
+// Nexus Endpoint names from the Nexus API Registry
+const NexusBillingEndpointName = "billing"
+const NexusShipmentsEndpointName = "shipment"
+
 // Aggressively low for demo purposes.
 const customerActionTimeout = 30 * time.Second
 
@@ -346,7 +350,7 @@ func (f *Fulfillment) processPayment(ctx workflow.Context) error {
 	}
 
 	// Replace ExecuteActivity with ExecuteOperation
-	billingService := workflow.NewNexusClient("billing", billing.BillingServiceName)
+	billingService := workflow.NewNexusClient(NexusBillingEndpointName, billing.BillingServiceName)
 	c := billingService.ExecuteOperation(ctx,
 		billing.ChargeOperationName,
 		&ChargeInput{
@@ -380,12 +384,6 @@ func (f *Fulfillment) processPayment(ctx workflow.Context) error {
 }
 
 func (f *Fulfillment) processShipment(ctx workflow.Context) error {
-	ctx = workflow.WithChildOptions(ctx,
-		workflow.ChildWorkflowOptions{
-			TaskQueue:  shipment.TaskQueue,
-			WorkflowID: shipment.ShipmentWorkflowID(f.ID),
-		},
-	)
 
 	var shippingItems []shipment.Item
 	for _, i := range f.Items {
@@ -398,14 +396,18 @@ func (f *Fulfillment) processShipment(ctx workflow.Context) error {
 		UpdatedAt: workflow.Now(ctx),
 	}
 
-	err := workflow.ExecuteChildWorkflow(ctx,
-		shipment.Shipment,
+	// Use Nexus Operation instead of Child Workflow
+	shipmentsService := workflow.NewNexusClient(NexusShipmentsEndpointName, shipment.ShipmentServiceName)
+
+	err := shipmentsService.ExecuteOperation(ctx,
+		shipment.ProcessShipmentOperationName,
 		shipment.ShipmentInput{
 			RequestorWID: workflow.GetInfo(ctx).WorkflowExecution.ID,
 
 			ID:    f.ID,
 			Items: shippingItems,
 		},
+		workflow.NexusOperationOptions{},
 	).Get(ctx, nil)
 
 	f.logger.Info("Shipment processed", "status", f.Shipment.Status)
