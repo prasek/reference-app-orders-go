@@ -1,10 +1,27 @@
 # Nexus demo
 
-Launch the `Debug Server with SQLite` from github.com/temporalio/temporal `main`
-
-Then spin up the environment:
 ```
-./setup.sh
+git clone https://github.com/prasek/reference-app-orders-go.git
+
+cd reference-app-orders-go
+
+git checkout nexus
+```
+
+### Spin up environment
+
+#### Start temporal server
+```
+./server.sh
+```
+
+Or alternatively:
+- Launch the `Debug Server with SQLite` from https://github.com/temporalio/temporal `main`
+
+#### Bring up the rest of the environment
+
+```
+./run.sh
 ```
 
 ### Start a workflow to process `Order 1`
