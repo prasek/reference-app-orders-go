@@ -52,13 +52,13 @@ Or alternatively:
 using the provided `./bin/temporal` CLI (from github.com/temporalio/cli@nexus)
 
 ```
-./bin/temporal workflow list
+./temporal workflow list
 ```
 
 #### Look at history for the `Order` workflow
 
 ```
-./bin/temporal workflow show -w <order workflow>
+./temporal workflow show -w <order workflow>
 ```
 
 1. ensure `NexusOperationScheduled` is reported in the caller's workflow history
