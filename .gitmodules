@@ -1,0 +1,4 @@
+[submodule "temporal-cli"]
+	path = temporal-cli
+	url = https://github.com/temporalio/cli
+	branch = nexus
