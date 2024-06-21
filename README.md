@@ -8,11 +8,27 @@ cd reference-app-orders-go
 git checkout nexus
 ```
 
+### Build temporal CLI from source with golang 1.22+
+
+If you don't have golang on your system: https://go.dev/doc/install
+
+Then build the temporal CLI with Nexus support available:
+
+```
+git submodule init
+git submodule update
+
+cd temporal-cli
+go build ./cmd/temporal
+cp ./temporal ../
+cd ..
+```
+
 ### Spin up environment
 
 #### Start temporal server
 ```
-./server.sh
+./temporal server start-dev --dynamic-config-value system.enableNexus=true --http-port 7243
 ```
 
 Or alternatively:
