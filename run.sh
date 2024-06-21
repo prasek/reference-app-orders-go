@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 ( cd deployments; docker compose down)
 
