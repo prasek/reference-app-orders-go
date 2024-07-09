@@ -24,6 +24,7 @@ cp ./temporal ../
 cd ..
 ```
 
+
 ### Spin up environment
 
 #### Start temporal server
@@ -41,8 +42,25 @@ Or alternatively:
 ./run.sh
 ```
 
+#### Optionally bring up the Temporal UI
+
+build the Temporal UI:
+```
+cd temporal-ui
+npm install
+npm run build:server
+cd ..
+```
+
+run the Temporal UI on port 3000
+```
+./run-ui.sh
+```
+
+open http://localhost:3000 for the Temporal UI
+
 ### Start a workflow to process `Order 1`
-1. open http://localhost:3000
+1. open http://localhost:3001 for the demo app UI
 1. click `Customer` role
 1. click `New Order`
 1. select Order 1

@@ -41,13 +41,13 @@ services:
     depends_on:
       - api
     environment:
-      - ORIGIN=http://localhost:3000
+      - ORIGIN=http://localhost:3001
       - BILLING_API_URL=http://api:8081
       - ORDER_API_URL=http://api:8082
       - SHIPMENT_API_URL=http://api:8083
       - FRAUD_API_URL=http://api:8084
     ports:
-      - "3000:3000"
+      - "3001:3000"
     restart: on-failure
 volumes:
   api-data:
