@@ -59,6 +59,8 @@ run the Temporal UI on port 3000
 
 open http://localhost:3000 for the Temporal UI
 
+and don't forget to enable Labs mode for the UI in the lower left corner!
+
 ### Start a workflow to process `Order 1`
 1. open http://localhost:3001 for the demo app UI
 1. click `Customer` role
