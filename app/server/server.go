@@ -61,7 +61,8 @@ func CreateClientOptionsFromEnv() (client.Options, error) {
 		}
 
 		clientOpts.ConnectionOptions.TLS = &tls.Config{
-			Certificates: []tls.Certificate{cert},
+			Certificates:       []tls.Certificate{cert},
+			InsecureSkipVerify: true,
 		}
 	}
 
