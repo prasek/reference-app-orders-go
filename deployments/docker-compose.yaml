@@ -4,19 +4,27 @@ services:
       context: ../
       target: oms-worker
     environment:
-      - TEMPORAL_ADDRESS=host.docker.internal:7233
       - DEBUG=true
+      - TEMPORAL_ADDRESS=nexus-demo-bugbash.temporal-dev.tmprl-test.cloud:7233
+      - TEMPORAL_NAMESPACE="nexus-demo-bugbash.temporal-dev"
+      - TEMPORAL_TLS_CERT=/certs/ca.pem
+      - TEMPORAL_TLS_KEY=/certs/ca.key
       - ORDER_API_URL=http://api:8082
       - SHIPMENT_API_URL=http://api:8083
       - FRAUD_API_URL=http://api:8084
     command: ["-k", "supersecretkey"]
+    volumes:
+      - namespace-certs:/certs
     restart: on-failure
   api:
     build:
       context: ../
       target: oms-api
     environment:
-      - TEMPORAL_ADDRESS=host.docker.internal:7233
+      - TEMPORAL_ADDRESS=nexus-demo-bugbash.temporal-dev.tmprl-test.cloud:7233
+      - TEMPORAL_NAMESPACE="nexus-demo-bugbash.temporal-dev"
+      - TEMPORAL_TLS_CERT=/certs/ca.pem
+      - TEMPORAL_TLS_KEY=/certs/ca.key
       - BIND_ON_IP=0.0.0.0
       - DEBUG=true
       - BILLING_API_PORT=8081
@@ -25,6 +33,7 @@ services:
       - FRAUD_API_PORT=8084
     command: ["-k", "supersecretkey"]
     volumes:
+      - namespace-certs:/certs
       - api-data:/data
     restart: on-failure
   codec-server:
@@ -53,3 +62,9 @@ services:
     restart: on-failure
 volumes:
   api-data:
+  namespace-certs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/Users/prasek/nexus-demo/certs"
