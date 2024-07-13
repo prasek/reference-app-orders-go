@@ -1,1 +1,1 @@
-Placeholder: Nexus enpoint descripiton markdown
+Placeholder: Nexus endpoint description markdown
