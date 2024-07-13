@@ -1,14 +1,89 @@
-# Nexus demo
+# Nexus demo on Temporal Cloud
 
+### Prerequisites
+- Golang 1.22+
+- `pnpm`
+
+### Demo app
 ```
 git clone https://github.com/prasek/reference-app-orders-go.git
+git clone https://github.com/temporalio/reference-app-orders-web.git
 
 cd reference-app-orders-go
 
-git checkout nexus
+git checkout nexus-cloud
 ```
 
-### Build temporal CLI from source with golang 1.22+
+#### Download latest tcld
+
+```
+brew install temporalio/brew/tcld
+```
+
+### Generate certs
+```
+mkdir -p $HOME/nexus-demo/certs 
+cd $HOME/nexus-demo/certs
+tcld gen ca --org temporal -d 1y --ca-cert ca.pem --ca-key ca.key
+cat ca.pem
+cd -
+```
+
+### Create namespace with Nexus enabled
+
+Create your namespace with `ca.pem` and then get your namespace enabled for Nexus
+
+### Setup tcld
+
+Login via `tcld` & enable Nexus in `tcld`
+
+### Create Nexus endpoints
+
+```
+./init.sh
+```
+
+### Bring up the demo app components
+
+in separate terminal windows:
+
+window 1:
+```
+./run.sh worker
+```
+
+window 2:
+```
+./run.sh api
+```
+
+window 3:
+```
+./run.sh web
+```
+
+### Start a workflow to process `Order 1`
+1. open http://localhost:5173 for the demo app UI
+1. click `Customer` role
+1. click `New Order`
+1. select Order 1
+1. click `Submit Order`
+
+### View Workflows and Nexus Operations in Temporal Cloud UI
+
+open the Temporal UI and don't forget to enable Labs mode for the UI in the lower left corner!
+
+see Nexus Operations in Workflow history
+
+
+### Complete workflow as `Courier` role
+
+1. Dispatch order
+1. Deliver order
+
+### Use temporal CLI to see results
+
+#### Build temporal CLI from source
 
 If you don't have golang on your system: https://go.dev/doc/install
 
@@ -23,7 +98,6 @@ go build ./cmd/temporal
 cp ./temporal ../
 cd ..
 ```
-
 
 ### Spin up environment
 
@@ -68,8 +142,7 @@ and don't forget to enable Labs mode for the UI in the lower left corner!
 1. click `Submit Order`
 
 ### Observe the workflow state in a new terminal
-
-using the provided `./bin/temporal` CLI (from github.com/temporalio/cli@nexus)
+using the `temporal.sh` wrapper 
 
 ```
 ./temporal workflow list
