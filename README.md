@@ -39,13 +39,15 @@ Login via `tcld` & enable Nexus in `tcld`
 
 ### Create Nexus endpoints
 
+in `reference-app-orders-go`
+
 ```
 ./init.sh
 ```
 
 ### Bring up the demo app components
 
-in separate terminal windows:
+in `reference-app-orders-go` open separate terminal windows
 
 window 1:
 ```
