@@ -14,7 +14,7 @@ fi
 echo "+ TEMPORAL_ADDRESS=${TEMPORAL_ADDRESS}"
 echo "+ TEMPORAL_NAMESPACE=${TEMPORAL_NAMESPACE}"
 echo "+ TEMPORAL_TLS_CERT=${TEMPORAL_TLS_CERT}"
-echo "+ TEMPORAL_TLS_KEY=${TEMPORAL_KEY}"
+echo "+ TEMPORAL_TLS_KEY=${TEMPORAL_TLS_KEY}"
 
 set -x
-go run ./cmd/oms $1
+go run ./cmd/oms "${@:1}"
