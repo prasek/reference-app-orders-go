@@ -21,8 +21,8 @@ services:
       context: ../
       target: oms-api
     environment:
-      - TEMPORAL_ADDRESS=nexus-demo-bugbash.temporal-dev.tmprl-test.cloud:7233
-      - TEMPORAL_NAMESPACE="nexus-demo-bugbash.temporal-dev"
+      - TEMPORAL_ADDRESS=nexus-demo-monolith.temporal-dev.tmprl-test.cloud:7233
+      - TEMPORAL_NAMESPACE="nexus-demo-monolith.temporal-dev"
       - TEMPORAL_TLS_CERT=/certs/ca.pem
       - TEMPORAL_TLS_KEY=/certs/ca.key
       - BIND_ON_IP=0.0.0.0
