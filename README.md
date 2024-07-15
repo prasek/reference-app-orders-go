@@ -29,9 +29,11 @@ cat ca.pem
 cd -
 ```
 
-### Create namespace with Nexus enabled
+### Create monolith namespace with Nexus enabled
 
 Create your namespace with `ca.pem` and then get your namespace enabled for Nexus
+
+Name this namespace: `<prefix>-monolith`
 
 ### Setup tcld
 
@@ -165,8 +167,38 @@ using the `temporal.sh` wrapper
 1. ensure `NexusOperationCompleted` is reported in the Order workflow history
    - should indicate the underlying `Charge` workflow was completed successfully
 
-### Observe Temporal server logs for additional info
-1. ensure callback is delivered
+## (Optional) update billing endpoint to route to a different namespace
+
+### Create billing namespace with Nexus enabled
+
+Create your namespace with `ca.pem` and then get your namespace enabled for Nexus
+
+Name this namespace: `<prefix>-billing`
+
+### Update billing endpoint
+```
+./update-billing-endpoint.sh
+```
+
+### Split out separate billing worker
+
+Stop `./run.sh worker`
+
+window 1 using monolith namespace
+```
+./run.sh worker --services order,shipment
+```
+
+window 2 using billing namespace (see ./setEnv.sh)
+```
+TEMPORAL_ENV=billing ./run.sh worker --services billing
+```
+
+### Place another order and verify it still works
+
+1. Place another order
+1. Verify order and shipment Nexus ops and workflows created in the monolith namespace
+1. Verify billing Nexus ops and workflow created in the billing namespace
 
 ---------------------------------
 
