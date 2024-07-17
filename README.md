@@ -37,7 +37,15 @@ Name this namespace: `<prefix>-monolith`
 
 ### Setup tcld
 
-Login via `tcld` & enable Nexus in `tcld`
+Login via `tcld`
+```
+tcld login
+```
+
+enable Nexus in `tcld`
+```
+tcld f tnxs
+```
 
 ### Create Nexus endpoints
 
