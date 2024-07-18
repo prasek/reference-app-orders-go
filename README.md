@@ -49,11 +49,14 @@ tcld f tnxs
 
 ### Create Nexus endpoints
 
-in `reference-app-orders-go`, update `./setEnv.sh` for your environment
+in `reference-app-orders-go`, update [./setEnv.sh](setEnv.sh) for your environment
 
+Create the endpoints using `tcld` see [./init.sh](init.sh):
 ```
 ./init.sh
 ```
+
+Change the endpoint names the ones you created above at L23-25 in `reference-app-orders-go/app/order/workflow.go`
 
 ### Bring up the demo app components
 

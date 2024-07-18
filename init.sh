@@ -14,11 +14,11 @@ rm -f api-store.db
 
 #delete endpoints
 tcld --server "$TEMPORAL_OPS_API" nexus endpoint delete \
-  --name billing
+  --name $NEXUS_ENDPOINT_BILLING
 tcld --server "$TEMPORAL_OPS_API" nexus endpoint delete \
-  --name shipment
+  --name $NEXUS_ENDPOINT_SHIPMENT
 tcld --server "$TEMPORAL_OPS_API" nexus endpoint delete \
-  --name order
+  --name $NEXUS_ENDPOINT_ORDER
 
 #create endpoints
 until tcld --server "$TEMPORAL_OPS_API" nexus endpoint create \
