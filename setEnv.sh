@@ -1,9 +1,13 @@
 #!/bin/bash
 
+# create namespaces first then add their names here
 export TEMPORAL_NAMESPACE_MONOLITH="my-monolith-namespace.account"
 export TEMPORAL_NAMESPACE_BILLING="my-billing-namespace.account"
 
 # endpoints are global to your account like namespaces
+# you can create these manually with the UI or `tcld nexus endpoint create`
+# or use `./init.sh` create them using the
+# endpoint names you provide here
 export NEXUS_ENDPOINT_ORDER="my-order-endpoint"
 export NEXUS_ENDPOINT_BILLING="my-billing-endpoint"
 export NEXUS_ENDPOINT_SHIPMENT="my-shipment-endpoint"
