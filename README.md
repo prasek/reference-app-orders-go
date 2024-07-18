@@ -160,24 +160,45 @@ and don't forget to enable Labs mode for the UI in the lower left corner!
 using the `temporal.sh` wrapper 
 
 ```
-./temporal workflow list
+./temporal.sh workflow list
 ```
 
 #### Look at history for the `Order` workflow
 
 ```
-./temporal workflow show -w <order workflow>
+./temporal.sh workflow show -w <order workflow>
+```
+
+#### Describe the shipping workflow to see the Nexus callback status
+
+```
+./temporal.sh workflow describe -w <shipping workflow>
 ```
 
 1. ensure `NexusOperationScheduled` is reported in the caller's workflow history
    - it should start the underlying `Charge` workflow
-
 1. ensure `NexusOperationStarted` is reported in the caller's workflow history
    - verify the `Charge` workflow completes successfully
-
 1. ensure `NexusOperationCompleted` is reported in the Order workflow history
    - should indicate the underlying `Charge` workflow was completed successfully
+1. ensure shipping workflow reports
 
+```
+Callbacks: 1
+
+  URL               https://nexus.nexus-demo-monolith.a2dd6.cluster.tmprl.cloud:7243/namespaces/nexus-demo-monolith.a2dd6/nexus/callback
+  Trigger           WorkflowClosed
+  State             Succeeded
+  Attempt           1
+  RegistrationTime  6 minutes ago
+
+
+Results:
+  RunTime         6m53.85s
+  Status          COMPLETED
+  Result          {"CourierReference":"A1-1721334713213:1:1234"}
+  ResultEncoding  json/plain
+```
 ## (Optional) update billing endpoint to route to a different namespace
 
 ### Create billing namespace with Nexus enabled
