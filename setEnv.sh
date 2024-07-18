@@ -21,3 +21,8 @@ else
     export TEMPORAL_ADDRESS="${TEMPORAL_NAMESPACE_MONOLITH}.tmprl.cloud:7233"
     export TEMPORAL_NAMESPACE="${TEMPORAL_NAMESPACE_MONOLITH}"
 fi
+
+if [[ $TEMPORAL_NAMESPACE_MONOLITH = "my-monolith-namespace.account" ]]; then
+    echo "ERROR: ./setEnv.sh must be updated to use the namespaces and Nexus endpoints for your environment"
+    exit 1
+fi
