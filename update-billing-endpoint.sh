@@ -19,11 +19,11 @@ set -x
 
 #delete endpoints
 tcld --server "$TEMPORAL_OPS_API" nexus endpoint delete \
-  --name billing
+  --name $NEXUS_ENDPOINT_BILLING
 
 #create endpoints
 until tcld --server "$TEMPORAL_OPS_API" nexus endpoint create \
-  --name billing \
+  --name $NEXUS_ENDPOINT_BILLING \
   --target-task-queue billing \
   --target-namespace $TEMPORAL_NAMESPACE_BILLING \
   --allow-namespace $TEMPORAL_NAMESPACE \

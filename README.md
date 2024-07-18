@@ -49,7 +49,7 @@ tcld f tnxs
 
 ### Create Nexus endpoints
 
-in `reference-app-orders-go`
+in `reference-app-orders-go`, update `./setEnv.sh` for your environment
 
 ```
 ./init.sh
