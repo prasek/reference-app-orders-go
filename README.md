@@ -98,20 +98,12 @@ see Nexus Operations in Workflow history
 
 ### Use temporal CLI to see results
 
-#### Build temporal CLI from source
-
-If you don't have golang on your system: https://go.dev/doc/install
-
-Then build the temporal CLI with Nexus support available:
+### Get `temporal` CLI v0.14.0-nexus.0
 
 ```
-git submodule init
-git submodule update
+curl -sSf https://temporal.download/cli.sh | sh -s -- --version v0.14.0-nexus.0 --dir .
 
-cd temporal-cli
-go build ./cmd/temporal
-cp ./temporal ../
-cd ..
+./bin/temporal --version
 ```
 
 ### Spin up environment
