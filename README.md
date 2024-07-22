@@ -11,13 +11,9 @@ git checkout nexus
 ### Get `temporal` CLI v0.14.0-nexus.0
 
 ```
-curl -L https://github.com/temporalio/cli/releases/download/v0.14.0-nexus.0/temporal_cli_0.14.0-nexus.0_darwin_arm64.tar.gz > temporal.tar.gz
+curl -sSf https://temporal.download/cli.sh | sh -s -- --version v0.14.0-nexus.0 --dir .
 
-tar -xvzf temporal.tar.gz temporal
-
-./temporal --version
-
-rm temporal.tar.gz
+./bin/temporal --version
 ```
 
 
@@ -26,7 +22,7 @@ rm temporal.tar.gz
 #### Start temporal server
 
 ```
-./temporal server start-dev --dynamic-config-value system.enableNexus=true --http-port 7243
+./bin/temporal server start-dev --dynamic-config-value system.enableNexus=true --http-port 7243
 ```
 
 #### Bring up the rest of the environment
@@ -54,19 +50,19 @@ and don't forget to enable Labs mode for the UI in the lower left corner!
 using the provided `./bin/temporal` CLI (from github.com/temporalio/cli@nexus)
 
 ```
-./temporal workflow list
+./bin/temporal workflow list
 ```
 
 #### Look at history for the `Order` workflow
 
 ```
-./temporal workflow show -w <order workflow>
+./bin/temporal workflow show -w <order workflow>
 ```
 
 #### Describe the shipping workflow to see the Nexus callback status
 
 ```
-./temporal workflow describe -w <shipping workflow>
+./bin/temporal workflow describe -w <shipping workflow>
 ```
 
 1. ensure `NexusOperationScheduled` is reported in the caller's workflow history
