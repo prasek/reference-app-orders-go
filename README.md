@@ -8,20 +8,16 @@ cd reference-app-orders-go
 git checkout nexus
 ```
 
-### Build temporal CLI from source with golang 1.22+
-
-If you don't have golang on your system: https://go.dev/doc/install
-
-Then build the temporal CLI with Nexus support available:
+### Get `temporal` CLI v0.14.0-nexus.0
 
 ```
-git submodule init
-git submodule update
+curl -L https://github.com/temporalio/cli/releases/download/v0.14.0-nexus.0/temporal_cli_0.14.0-nexus.0_darwin_arm64.tar.gz > temporal.tar.gz
 
-cd temporal-cli
-go build ./cmd/temporal
-cp ./temporal ../
-cd ..
+tar -xvzf temporal.tar.gz temporal
+
+./temporal --version
+
+rm temporal.tar.gz
 ```
 
 
@@ -33,31 +29,16 @@ cd ..
 ./temporal server start-dev --dynamic-config-value system.enableNexus=true --http-port 7243
 ```
 
-Or alternatively:
-- Launch the `Debug Server with SQLite` from https://github.com/temporalio/temporal `main`
-
 #### Bring up the rest of the environment
 
 ```
 ./run.sh
 ```
 
-#### Optionally bring up the Temporal UI
+#### Bring up the Temporal UI
 
-build the Temporal UI:
-```
-cd temporal-ui
-npm install
-npm run build:server
-cd ..
-```
 
-run the Temporal UI on port 3000
-```
-./run-ui.sh
-```
-
-open http://localhost:3000 for the Temporal UI
+open http://localhost:8233/ for the Temporal UI
 
 and don't forget to enable Labs mode for the UI in the lower left corner!
 
@@ -80,6 +61,12 @@ using the provided `./bin/temporal` CLI (from github.com/temporalio/cli@nexus)
 
 ```
 ./temporal workflow show -w <order workflow>
+```
+
+#### Describe the shipping workflow to see the Nexus callback status
+
+```
+./temporal workflow describe -w <shipping workflow>
 ```
 
 1. ensure `NexusOperationScheduled` is reported in the caller's workflow history

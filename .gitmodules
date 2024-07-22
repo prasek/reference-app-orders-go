@@ -1,8 +1,0 @@
-[submodule "temporal-cli"]
-	path = temporal-cli
-	url = https://github.com/temporalio/cli
-	branch = nexus
-[submodule "temporal-ui"]
-	path = temporal-ui
-	url = https://github.com/temporalio/ui
-	branch = nexus
