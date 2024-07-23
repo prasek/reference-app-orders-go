@@ -7,6 +7,7 @@ toolchain go1.22.2
 require (
 	github.com/google/uuid v1.6.0
 	github.com/jmoiron/sqlx v1.4.0
+<<<<<<< HEAD
 	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.9.0
 <<<<<<< HEAD
@@ -18,6 +19,14 @@ require (
 	go.temporal.io/api v1.34.0
 	go.temporal.io/sdk v1.27.1-0.20240618231938-571b49a77141
 	golang.org/x/sync v0.6.0
+=======
+	github.com/nexus-rpc/sdk-go v0.0.9
+	github.com/spf13/cobra v1.8.0
+	github.com/stretchr/testify v1.9.0
+	go.temporal.io/api v1.36.0
+	go.temporal.io/sdk v1.28.1
+	golang.org/x/sync v0.7.0
+>>>>>>> 9bc1a35 (bump to temporalio/sdk-go v1.28.1)
 	modernc.org/sqlite v1.29.10
 >>>>>>> 43444b8 (convert billing service to Nexus)
 )
@@ -36,10 +45,13 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect
 <<<<<<< HEAD
+<<<<<<< HEAD
 	github.com/nexus-rpc/sdk-go v0.0.9 // indirect
 =======
 	github.com/nexus-rpc/sdk-go v0.0.8-0.20240617225139-cd9d6c50e99d // indirect
 >>>>>>> 43444b8 (convert billing service to Nexus)
+=======
+>>>>>>> 9bc1a35 (bump to temporalio/sdk-go v1.28.1)
 	github.com/pborman/uuid v1.2.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
@@ -50,7 +62,11 @@ require (
 	golang.org/x/net v0.27.0 // indirect
 	golang.org/x/sys v0.22.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
+<<<<<<< HEAD
 	golang.org/x/time v0.3.0 // indirect
+=======
+	golang.org/x/time v0.5.0 // indirect
+>>>>>>> 9bc1a35 (bump to temporalio/sdk-go v1.28.1)
 	google.golang.org/genproto/googleapis/api v0.0.0-20240711142825-46eb208f015d // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240711142825-46eb208f015d // indirect
 	google.golang.org/grpc v1.65.0 // indirect
