@@ -19,6 +19,12 @@ type orderImpl struct {
 	logger       log.Logger
 }
 
+/*
+We have tentative plans to include the endpoint name in a Nexus URI, so plan to restrict this to `^[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9]$` (subset of hostname RFC952) in the public preview timeframe, which will allow dashes.
+
+Use of _ in endpoint names is deprecated. We will be removing support for _ in endpoint names in public preview.
+*/
+
 // Nexus Endpoint names from the Nexus API Registry
 const NexusBillingEndpointName = "billing"
 const NexusShipmentEndpointName = "shipment"
