@@ -8,11 +8,13 @@ export TEMPORAL_NAMESPACE_BILLING="my-billing-namespace.account"
 # you can create these manually with the UI or `tcld nexus endpoint create`
 # or use `./init.sh` create them using the
 # endpoint names you provide here
-export NEXUS_ENDPOINT_ORDER="my-order-endpoint"
-export NEXUS_ENDPOINT_BILLING="my-billing-endpoint"
-export NEXUS_ENDPOINT_SHIPMENT="my-shipment-endpoint"
+# this likely doesn't need to change, unless running in a shared environment
+# make corresponding changes in https://github.com/prasek/reference-app-orders-go/blob/9bc1a35248eb9d0b5e6c0f8db731bb2f6c811fec/app/order/workflows.go#L23
+export NEXUS_ENDPOINT_ORDER="order"
+export NEXUS_ENDPOINT_BILLING="billing"
+export NEXUS_ENDPOINT_SHIPMENT="shipment"
 
-# this likely doesn't need to chage for your environment
+# this likely doesn't need to change for your environment
 export TEMPORAL_TLS_CERT="$HOME/nexus-demo/certs/ca.pem"
 export TEMPORAL_TLS_KEY="$HOME/nexus-demo/certs/ca.key"
 export TEMPORAL_OPS_API="saas-api.tmprl.cloud:443"
