@@ -1,7 +1,14 @@
 # Nexus demo
 
+### Prerequisites
+- Golang 1.22+
+- `pnpm`
+
+
+### Demo app
 ```
 git clone https://github.com/prasek/reference-app-orders-go.git
+git clone https://github.com/temporalio/reference-app-orders-web.git
 
 cd reference-app-orders-go
 
@@ -22,7 +29,6 @@ curl -sSf https://temporal.download/cli.sh | sh -s -- --version v0.14.0-nexus.0 
 ./bin/temporal --version
 ```
 
-
 ### Spin up environment
 
 #### Start temporal server
@@ -31,21 +37,40 @@ curl -sSf https://temporal.download/cli.sh | sh -s -- --version v0.14.0-nexus.0 
 ./bin/temporal server start-dev --dynamic-config-value system.enableNexus=true --http-port 7243
 ```
 
-#### Bring up the rest of the environment
+### Create Nexus endpoints and namespaces
 
+Create the namespaces and endpoints using `./bin/temporal` see [./init.sh](init.sh):
 ```
-./run.sh
+./init.sh
+```
+
+### Bring up the demo app components
+
+in `reference-app-orders-go` open separate terminal windows
+
+window 1:
+```
+./run.sh worker
+```
+
+window 2:
+```
+./run.sh api
+```
+
+window 3:
+```
+./run.sh web
 ```
 
 #### Bring up the Temporal UI
-
 
 open http://localhost:8233/ for the Temporal UI
 
 and don't forget to enable Labs mode for the UI in the lower left corner!
 
 ### Start a workflow to process `Order 1`
-1. open http://localhost:3001 for the demo app UI
+1. open http://localhost:5173 for the demo app UI
 1. click `Customer` role
 1. click `New Order`
 1. select Order 1
@@ -71,17 +96,33 @@ using the provided `./bin/temporal` CLI (from github.com/temporalio/cli@nexus)
 ./bin/temporal workflow describe -w <shipping workflow>
 ```
 
-1. ensure `NexusOperationScheduled` is reported in the caller's workflow history
-   - it should start the underlying `Charge` workflow
+## (Optional) update billing endpoint to route to a different namespace
 
-1. ensure `NexusOperationStarted` is reported in the caller's workflow history
-   - verify the `Charge` workflow completes successfully
+### Create billing namespace and endpoint
 
-1. ensure `NexusOperationCompleted` is reported in the Order workflow history
-   - should indicate the underlying `Charge` workflow was completed successfully
+```
+./create-billing-endpoint.sh
+```
 
-### Observe Temporal server logs for additional info
-1. ensure callback is delivered
+### Split out separate billing worker
+
+Stop `./run.sh worker`
+
+window 1 using monolith namespace
+```
+./run.sh worker --services order,shipment
+```
+
+window 2 using billing namespace (see ./setEnv.sh)
+```
+TEMPORAL_NAMESPACE=billing ./run.sh worker --services billing
+```
+
+### Place another order and verify it still works
+
+1. Place another order
+1. Verify order and shipment Nexus ops and workflows created in the monolith namespace
+1. Verify billing Nexus ops and workflow created in the billing namespace
 
 ---------------------------------
 

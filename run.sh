@@ -1,19 +1,18 @@
 #!/bin/bash
+
+# for run.sh and temporal.sh
+if [[ $TEMPORAL_ENV = "billing" ]]; then
+    export TEMPORAL_NAMESPACE="billing"
+else
+    export TEMPORAL_NAMESPACE="monolith"
+fi
+
+echo "+ TEMPORAL_NAMESPACE=${TEMPORAL_NAMESPACE}"
+
+if [ $1 = "web" ]; then
+    (set -x; cd ../reference-app-orders-web; pnpm install; pnpm dev)
+    exit 0
+fi
+
 set -x
-
-( cd deployments; docker compose down)
-
-docker volume rm deployments_api-data
-
-./bin/temporal operator namespace create --namespace default
-
-./bin/temporal operator nexus endpoint delete --name billing
-./bin/temporal operator nexus endpoint create --name billing --target-namespace default --target-task-queue billing --description test123
-
-./bin/temporal operator nexus endpoint delete --name shipment
-./bin/temporal operator nexus endpoint create --name shipment --target-namespace default --target-task-queue shipments --description test123
-
-./bin/temporal operator nexus endpoint delete --name order
-./bin/temporal operator nexus endpoint create --name order --target-namespace default --target-task-queue orders --description test123
-
-(cd deployments; docker compose up --build)
+go run ./cmd/oms "${@:1}"
