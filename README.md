@@ -101,7 +101,7 @@ using the provided `./bin/temporal` CLI (from github.com/temporalio/cli@nexus)
 ### Create billing namespace and endpoint
 
 ```
-./create-billing-endpoint.sh
+./update-billing-endpoint.sh
 ```
 
 ### Split out separate billing worker
@@ -115,7 +115,7 @@ window 1 using monolith namespace
 
 window 2 using billing namespace (see ./setEnv.sh)
 ```
-TEMPORAL_NAMESPACE=billing ./run.sh worker --services billing
+TEMPORAL_ENV=billing ./run.sh worker --services billing
 ```
 
 ### Place another order and verify it still works
