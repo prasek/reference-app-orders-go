@@ -348,7 +348,7 @@ func (f *Fulfillment) processPayment(ctx workflow.Context) error {
 			IdempotencyKey: chargeKey,
 		},
 		workflow.NexusOperationOptions{
-			ScheduleToCloseTimeout: 30 * time.Second,
+			ScheduleToCloseTimeout: 3600 * time.Second,
 		})
 
 	if err := c.Get(ctx, &charge); err != nil {
