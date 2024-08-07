@@ -31,11 +31,26 @@ curl -sSf https://temporal.download/cli.sh | sh -s -- --version v0.14.0-nexus.0 
 
 ### Spin up environment
 
-#### Start temporal server
+#### Start local temporal dev server
 
 ```
 ./bin/temporal server start-dev --dynamic-config-value system.enableNexus=true --http-port 7243
 ```
+
+#### or use docker-compose with the latest pre-release bits
+
+```
+git clone https://github.com/prasek/docker-compose.git
+
+cd docker-compose
+
+git checkout nexus
+
+docker-compose up
+```
+
+For running in k8s [see related config required to run pre-release Nexus](https://github.com/prasek/docker-compose/pull/1/files)
+
 
 ### Create Nexus endpoints and namespaces
 
@@ -66,6 +81,7 @@ window 3:
 #### Bring up the Temporal UI
 
 open http://localhost:8233/ for the Temporal UI
+- or if using docker-compose: Temporal UI is http://localhost:8080/
 
 and don't forget to enable Labs mode for the UI in the lower left corner!
 

@@ -1,7 +1,11 @@
 #!/bin/bash
 set -x
 
+#if local
 rm -f ./api-store.db
+
+#if using https://github.com/prasek/docker-compose/tree/nexus
+docker volume rm -f deployments_api-data
 
 ./bin/temporal operator namespace create --namespace monolith
 ./bin/temporal operator namespace create --namespace billing
