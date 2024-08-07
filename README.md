@@ -37,6 +37,8 @@ curl -sSf https://temporal.download/cli.sh | sh -s -- --version v0.14.0-nexus.0 
 ./bin/temporal server start-dev --dynamic-config-value system.enableNexus=true --http-port 7243
 ```
 
+open http://localhost:8233/ for the Temporal UI, if using local dev server
+
 #### or use docker-compose with the latest pre-release bits
 
 ```
@@ -49,6 +51,9 @@ git checkout nexus
 docker-compose up
 ```
 
+open http://localhost:8080/ for the Temporal UI, if using docker-compose
+
+#### or run in k8s
 For running in k8s [see related config required to run pre-release Nexus](https://github.com/prasek/docker-compose/pull/1/files)
 
 
@@ -79,11 +84,10 @@ window 3:
 ```
 
 #### Bring up the Temporal UI
+- local dev server Temporal UI: http://localhost:8233/
+- docker-compose Temporal UI: http://localhost:8080/
 
-open http://localhost:8233/ for the Temporal UI
-- or if using docker-compose: Temporal UI is http://localhost:8080/
-
-and don't forget to enable Labs mode for the UI in the lower left corner!
+and don't forget to enable Labs mode for the UI in the lower left corner of the Temporal UI!
 
 ### Start a workflow to process `Order 1`
 1. open http://localhost:5173 for the demo app UI
