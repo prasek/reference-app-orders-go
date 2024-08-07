@@ -81,19 +81,19 @@ and don't forget to enable Labs mode for the UI in the lower left corner!
 using the provided `./bin/temporal` CLI (from github.com/temporalio/cli@nexus)
 
 ```
-./bin/temporal workflow list
+./bin/temporal workflow list -n monolith
 ```
 
 #### Look at history for the `Order` workflow
 
 ```
-./bin/temporal workflow show -w <order workflow>
+./bin/temporal workflow show -n monolith -w <order workflow>
 ```
 
 #### Describe the shipping workflow to see the Nexus callback status
 
 ```
-./bin/temporal workflow describe -w <shipping workflow>
+./bin/temporal workflow describe -n monolith -w <shipping workflow>
 ```
 
 ## (Optional) update billing endpoint to route to a different namespace
