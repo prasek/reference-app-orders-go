@@ -176,9 +176,9 @@ type NotificationCallback struct {
 }
 
 func ExecuteCallbackOperation(ctx workflow.Context, c NotificationCallback, input ShipmentStatusNotification) error {
-	callback := workflow.NewNexusClient(c.EndpointName, c.ServiceName)
+	nexusClient := workflow.NewNexusClient(c.EndpointName, c.ServiceName)
 
-	return callback.ExecuteOperation(ctx,
+	return nexusClient.ExecuteOperation(ctx,
 		c.OperationName,
 		input,
 		workflow.NexusOperationOptions{}).Get(ctx, nil)
