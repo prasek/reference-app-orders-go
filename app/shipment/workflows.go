@@ -16,7 +16,8 @@ type Item struct {
 
 // ShipmentInput is the input for a Shipment workflow.
 type ShipmentInput struct {
-	RequestorWID string
+	//RequestorWID string
+	NotificationCallback NotificationCallback
 
 	ID    string
 	Items []Item
@@ -25,8 +26,10 @@ type ShipmentInput struct {
 // ShipmentCarrierUpdateSignalName is the name for a signal to update a shipment's status from the carrier.
 const ShipmentCarrierUpdateSignalName = "ShipmentCarrierUpdate"
 
+/* moving to to a Nexus Operation
 // ShipmentStatusUpdatedSignalName is the name for a signal to notify of an update to a shipment's status.
 const ShipmentStatusUpdatedSignalName = "ShipmentStatusUpdated"
+*/
 
 const (
 	// ShipmentStatusPending represents a shipment that has not yet been booked with a carrier
@@ -45,7 +48,8 @@ type ShipmentCarrierUpdateSignal struct {
 }
 
 // ShipmentStatusUpdatedSignal is used to notify the requestor of an update to a shipment's status.
-type ShipmentStatusUpdatedSignal struct {
+type ShipmentStatusNotification struct {
+	CallerID   string    `json:"callerID"`
 	ShipmentID string    `json:"shipmentID"`
 	Status     string    `json:"status"`
 	UpdatedAt  time.Time `json:"updatedAt"`
@@ -57,7 +61,8 @@ type ShipmentResult struct {
 }
 
 type shipmentImpl struct {
-	requestorWID string
+	notificationCallback NotificationCallback
+	//requestorWID   string
 
 	id        string
 	status    string
@@ -78,7 +83,8 @@ func Shipment(ctx workflow.Context, input *ShipmentInput) (*ShipmentResult, erro
 }
 
 func (s *shipmentImpl) setup(ctx workflow.Context, input *ShipmentInput) error {
-	s.requestorWID = input.RequestorWID
+	//s.requestorWID = input.RequestorWID
+	s.notificationCallback = input.NotificationCallback
 	s.id = input.ID
 	s.status = ShipmentStatusPending
 
@@ -161,14 +167,31 @@ func (s *shipmentImpl) updateStatus(ctx workflow.Context, status string) error {
 	return workflow.ExecuteLocalActivity(ctx, a.UpdateShipmentStatus, update).Get(ctx, nil)
 }
 
+// Send signal via Nexus status update callback operaiton instead
+type NotificationCallback struct {
+	EndpointName  string
+	ServiceName   string
+	OperationName string
+	CallerID      string
+}
+
+func ExecuteCallbackOperation(ctx workflow.Context, c NotificationCallback, input ShipmentStatusNotification) error {
+	nexusClient := workflow.NewNexusClient(c.EndpointName, c.ServiceName)
+
+	return nexusClient.ExecuteOperation(ctx,
+		c.OperationName,
+		input,
+		workflow.NexusOperationOptions{}).Get(ctx, nil)
+}
+
 func (s *shipmentImpl) notifyRequestorOfStatus(ctx workflow.Context) error {
-	return workflow.SignalExternalWorkflow(ctx,
-		s.requestorWID, "",
-		ShipmentStatusUpdatedSignalName,
-		ShipmentStatusUpdatedSignal{
+	return ExecuteCallbackOperation(ctx,
+		s.notificationCallback,
+		ShipmentStatusNotification{
+			CallerID:   s.notificationCallback.CallerID,
 			ShipmentID: s.id,
 			Status:     s.status,
 			UpdatedAt:  s.updatedAt,
 		},
-	).Get(ctx, nil)
+	)
 }
