@@ -6,29 +6,13 @@ if [ -f ./setEnv.sh ]; then
 fi
 
 echo "+ TEMPORAL_OPS_API=${TEMPORAL_OPS_API}"
-echo "+ TEMPORAL_NAMESPACE=${TEMPORAL_NAMESPACE}"
+echo "+ TEMPORAL_NAMESPACE_BILLING=${TEMPORAL_NAMESPACE_BILLING}"
 
 set -x
 
 #update billing endpoint
-#tcld --server "saas-api.tmprl-test.cloud:443" nexus endpoint update \
-#  --name billing \
-#  --target-task-queue billing \
-#  --target-namespace nexus-demo-billing.temporal-dev \
-#  --description-file description.md
-
-#delete endpoints
-tcld --server "$TEMPORAL_OPS_API" nexus endpoint delete \
-  --name $NEXUS_ENDPOINT_BILLING
-
-#create endpoints
-until tcld --server "$TEMPORAL_OPS_API" nexus endpoint create \
+tcld --server "$TEMPORAL_OPS_API" nexus endpoint update \
   --name $NEXUS_ENDPOINT_BILLING \
   --target-task-queue billing \
   --target-namespace $TEMPORAL_NAMESPACE_BILLING \
-  --allow-namespace $TEMPORAL_NAMESPACE \
   --description-file description.md
-do
-  echo "Try again"
-  sleep 1
-done
