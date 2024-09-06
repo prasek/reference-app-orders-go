@@ -7,7 +7,7 @@
 ### Demo app
 ```
 git clone https://github.com/prasek/reference-app-orders-go.git
-git clone https://github.com/temporalio/reference-app-orders-web.git
+git clone https://github.com/prasek/reference-app-orders-web.git
 
 cd reference-app-orders-go
 
