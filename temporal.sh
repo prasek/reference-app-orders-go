@@ -12,4 +12,7 @@ echo "+ TEMPORAL_TLS_KEY=${TEMPORAL_KEY}"
 
 set -x
 
-./bin/temporal "${@:1}"
+temporal --version
+
+#./bin/temporal "${@:1}"
+temporal "${@:1}"

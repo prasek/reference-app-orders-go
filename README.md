@@ -14,10 +14,13 @@ cd reference-app-orders-go
 git checkout nexus-cloud
 ```
 
-#### Download latest tcld
+#### Download latest tcld & temporal CLI
+
+Download the latest tcld and temporal CLI binaries:
 
 ```
 brew install temporalio/brew/tcld
+brew install temporal
 ```
 
 ### Generate certs
@@ -40,11 +43,6 @@ Name this namespace: `<prefix>-monolith`
 Login via `tcld`
 ```
 tcld login
-```
-
-enable Nexus in `tcld`
-```
-tcld f tnxs
 ```
 
 ### Create Nexus endpoints
@@ -95,22 +93,6 @@ see Nexus Operations in Workflow history
 
 1. Dispatch order
 1. Deliver order
-
-### Use temporal CLI to see results
-
-### Get `temporal` CLI v0.14.0-nexus.0
-
-1. Go to the [CLI release page](https://github.com/temporalio/cli/releases/tag/v0.14.0-nexus.0) and download an archive
-   for your OS and architecture.
-2. Extract the downloaded archive into the `./bin` directory.
-
-or alternatively:
-
-```
-curl -sSf https://temporal.download/cli.sh | sh -s -- --version v0.14.0-nexus.0 --dir .
-
-./bin/temporal --version
-```
 
 ### Spin up environment
 
