@@ -2,7 +2,7 @@
 
 ### Prerequisites
 - Golang 1.22+
-- `pnpm`
+- [pnpm](https://pnpm.io/installation)
 
 ### Demo app
 ```
@@ -37,6 +37,17 @@ cd -
 Create your namespace with `ca.pem` and then get your namespace enabled for Nexus
 
 Name this namespace: `<prefix>-monolith`
+
+For example via the CLI:
+
+```
+tcld namespace create \
+	--namespace <your-monolith-namespace> \
+	--region us-west-2 \
+	--ca-certificate-file '$HOME/nexus-demo/certs/ca.pem' \
+	--retention-days 1
+
+```
 
 ### Setup tcld
 
@@ -75,25 +86,105 @@ window 3:
 ./run.sh web
 ```
 
+In the console Find the demo app UI web URL and open it
+in an browser which is typically http://localhost:5173
+
 ### Start a workflow to process `Order 1`
-1. open http://localhost:5173 for the demo app UI
+1. open demo app UI, typically http://localhost:5173
 1. click `Customer` role
 1. click `New Order`
 1. select Order 1
-1. click `Submit Order`
+1. click `Submit`
 
 ### View Workflows and Nexus Operations in Temporal Cloud UI
 
-open the Temporal UI and don't forget to enable Labs mode for the UI in the lower left corner!
+Goto your monolith namespace in [Temporal UI](https://cloud.temporal.io/)
 
-see Nexus Operations in Workflow history
+Open the order Workflow
+
+Look for Nexus Operations in the order Workflow history
 
 
-### Complete workflow as `Courier` role
+### Complete workflow as `Courier` role in the OMS reference app
 
 1. Dispatch order
 1. Deliver order
 
+
+# Decompose the monolith
+
+## Update billing endpoint to route to a different namespace
+
+### Create billing namespace with Nexus enabled
+
+Create your namespace with `ca.pem` and then get your namespace enabled for Nexus
+
+Name this namespace: `<prefix>-billing`
+
+For example via the CLI:
+
+```
+tcld namespace create \
+	--namespace <your-billing-namespace> \
+	--region us-west-2 \
+	--ca-certificate-file '$HOME/nexus-demo/certs/ca.pem' \
+	--retention-days 1
+```
+
+### Update billing endpoint
+```
+./update-billing-endpoint.sh
+```
+
+### Split out separate billing worker
+
+Stop `./run.sh worker`
+
+window 1 using monolith namespace
+```
+./run.sh worker --services order,shipment
+```
+
+window 2 using billing namespace (see ./setEnv.sh)
+```
+TEMPORAL_ENV=billing ./run.sh worker --services billing
+```
+
+### Place another order in the OMS reference app and verify it still works
+
+1. open demo app UI, typically http://localhost:5173
+1. click `Customer` role
+1. click `New Order`
+1. select Order 1
+1. click `Submit`
+
+### View Workflows and Nexus Operations in Temporal Cloud UI
+
+Goto your monolith namespace in [Temporal UI](https://cloud.temporal.io/)
+
+Open the 2nd order Workflow
+
+Look for Nexus Operations in the order Workflow history
+
+Find the `NexusOperationStarted` event and click the link to navigate to the charge Workflow
+
+Find the `WorkflowExecutionStarted` event in the charge Workflow and click the link to navigate back to the order Workflow
+
+You have now traversed a Nexus bi-direction link!
+
+
+### Complete workflow as `Courier` role in the OMS reference app
+
+1. Dispatch order
+1. Deliver order
+
+Verify the 2nd order Workflow has completed successfully.
+
+# Done!
+
+You've successfully decomposed the monolith!!!
+
+# Extra Credit
 
 ### Observe the workflow state in a new terminal
 using the `temporal.sh` wrapper 
@@ -271,42 +362,9 @@ Results:
   Result          {"CourierReference":"A1-1721334713213:1:1234"}
   ResultEncoding  json/plain
 ```
-## (Optional) update billing endpoint to route to a different namespace
 
-### Create billing namespace with Nexus enabled
 
-Create your namespace with `ca.pem` and then get your namespace enabled for Nexus
-
-Name this namespace: `<prefix>-billing`
-
-### Update billing endpoint
-```
-./update-billing-endpoint.sh
-```
-
-### Split out separate billing worker
-
-Stop `./run.sh worker`
-
-window 1 using monolith namespace
-```
-./run.sh worker --services order,shipment
-```
-
-window 2 using billing namespace (see ./setEnv.sh)
-```
-TEMPORAL_ENV=billing ./run.sh worker --services billing
-```
-
-### Place another order and verify it still works
-
-1. Place another order
-1. Verify order and shipment Nexus ops and workflows created in the monolith namespace
-1. Verify billing Nexus ops and workflow created in the billing namespace
-
----------------------------------
-
-# Temporal Reference Application: Order Management System
+# Appendix - Original Reference App Docs
 
 ![OMS logo](docs/images/oms-logo.png)
 
