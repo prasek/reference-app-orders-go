@@ -32,28 +32,27 @@ cat ca.pem
 cd -
 ```
 
-### Create monolith namespace with Nexus enabled
+### Login with tcld
 
-Create your namespace with `ca.pem` and then get your namespace enabled for Nexus
+Login via `tcld`
 
-Name this namespace: `<prefix>-monolith`
+```
+tcld login
+```
+
+### Create a monolith namespace in Temporal Cloud
+
+Create your `monolith` namespace with `ca.pem`
 
 For example via the CLI:
 
 ```
 tcld namespace create \
-	--namespace <your-monolith-namespace> \
+	--namespace <my-monolith-namespace> \
 	--region us-west-2 \
 	--ca-certificate-file '$HOME/nexus-demo/certs/ca.pem' \
 	--retention-days 1
 
-```
-
-### Setup tcld
-
-Login via `tcld`
-```
-tcld login
 ```
 
 ### Create Nexus endpoints
@@ -117,15 +116,13 @@ Look for Nexus Operations in the order Workflow history
 
 ### Create billing namespace with Nexus enabled
 
-Create your namespace with `ca.pem` and then get your namespace enabled for Nexus
-
-Name this namespace: `<prefix>-billing`
+Create your `billing` namespace with `ca.pem` and then get your namespace enabled for Nexus
 
 For example via the CLI:
 
 ```
 tcld namespace create \
-	--namespace <your-billing-namespace> \
+	--namespace <my-billing-namespace> \
 	--region us-west-2 \
 	--ca-certificate-file '$HOME/nexus-demo/certs/ca.pem' \
 	--retention-days 1
