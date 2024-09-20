@@ -149,6 +149,139 @@ using the `temporal.sh` wrapper
 ./temporal.sh workflow show -w <order workflow>
 ```
 
+which will show:
+```
++ temporal workflow show -w Order:A1-1726764867236
+Progress:
+  ID           Time                     Type
+    1  2024-09-19T16:54:33Z  WorkflowExecutionStarted
+    2  2024-09-19T16:54:33Z  WorkflowTaskScheduled
+    3  2024-09-19T16:54:33Z  WorkflowTaskStarted
+    4  2024-09-19T16:54:33Z  WorkflowTaskCompleted
+    5  2024-09-19T16:54:33Z  ActivityTaskScheduled
+    6  2024-09-19T16:54:33Z  ActivityTaskStarted
+    7  2024-09-19T16:54:33Z  ActivityTaskCompleted
+    8  2024-09-19T16:54:33Z  WorkflowTaskScheduled
+    9  2024-09-19T16:54:33Z  WorkflowTaskStarted
+   10  2024-09-19T16:54:33Z  WorkflowTaskCompleted
+   11  2024-09-19T16:54:33Z  MarkerRecorded
+   12  2024-09-19T16:54:33Z  MarkerRecorded
+   13  2024-09-19T16:54:33Z  NexusOperationScheduled
+   14  2024-09-19T16:54:33Z  NexusOperationStarted
+   15  2024-09-19T16:54:33Z  WorkflowTaskScheduled
+   16  2024-09-19T16:54:33Z  WorkflowTaskStarted
+   17  2024-09-19T16:54:33Z  WorkflowTaskCompleted
+   18  2024-09-19T16:54:34Z  NexusOperationCompleted
+   19  2024-09-19T16:54:34Z  WorkflowTaskScheduled
+   20  2024-09-19T16:54:34Z  WorkflowTaskStarted
+   21  2024-09-19T16:54:34Z  WorkflowTaskCompleted
+   22  2024-09-19T16:54:34Z  NexusOperationScheduled
+   23  2024-09-19T16:54:34Z  NexusOperationStarted
+   24  2024-09-19T16:54:34Z  WorkflowTaskScheduled
+   25  2024-09-19T16:54:34Z  WorkflowTaskStarted
+   26  2024-09-19T16:54:34Z  WorkflowTaskCompleted
+   27  2024-09-19T16:54:34Z  WorkflowExecutionSignaled
+   28  2024-09-19T16:54:34Z  WorkflowTaskScheduled
+   29  2024-09-19T16:54:35Z  WorkflowTaskStarted
+   30  2024-09-19T16:54:35Z  WorkflowTaskCompleted
+   31  2024-09-19T16:56:37Z  WorkflowExecutionSignaled
+   32  2024-09-19T16:56:37Z  WorkflowTaskScheduled
+   33  2024-09-19T16:56:37Z  WorkflowTaskStarted
+   34  2024-09-19T16:56:37Z  WorkflowTaskCompleted
+   35  2024-09-19T16:56:38Z  WorkflowExecutionSignaled
+   36  2024-09-19T16:56:38Z  WorkflowTaskScheduled
+   37  2024-09-19T16:56:38Z  WorkflowTaskStarted
+   38  2024-09-19T16:56:38Z  WorkflowTaskCompleted
+   39  2024-09-19T16:56:38Z  NexusOperationCompleted
+   40  2024-09-19T16:56:38Z  WorkflowTaskScheduled
+   41  2024-09-19T16:56:38Z  WorkflowTaskStarted
+   42  2024-09-19T16:56:38Z  WorkflowTaskCompleted
+   43  2024-09-19T16:56:38Z  MarkerRecorded
+   44  2024-09-19T16:56:38Z  WorkflowExecutionCompleted
+```
+
+or the JSON output
+```
+./temporal.sh workflow show --output json -w <order workflow>
+```
+
+which will show:
+
+##### NexusOperationScheduled
+```
+   {
+      "eventId": "13",
+      "eventTime": "2024-09-19T16:54:33.471317119Z",
+      "eventType": "EVENT_TYPE_NEXUS_OPERATION_SCHEDULED",
+      "version": "1265",
+      "taskId": "172827111",
+      "nexusOperationScheduledEventAttributes": {
+        "endpoint": "billing",
+        "service": "billing",
+        "operation": "charge",
+        "input": {
+          "metadata": {
+            "encoding": "anNvbi9wbGFpbg=="
+          },
+          "data": "eyJjdXN0b21lcklkIjoiMTIzNCIsIm9yZGVyUmVmZXJlbmNlIjoiQTEtMTcyNjc2NDg2NzIzNjoxIiwiaXRlbXMiOlt7InNrdSI6IlZhbnMgT2xkIFNrb29sIiwicXVhbnRpdHkiOjF9XSwiaWRlbXBvdGVuY3lLZXkiOiI4NTZjZjZhNi0wOGMxLTQ1ZWUtOTk3Yy1mYjRjZTZkYTk4MTEifQ=="
+        },
+        "scheduleToCloseTimeout": "3600s",
+        "workflowTaskCompletedEventId": "10",
+        "requestId": "b71fa8b6-54ad-4db9-993b-8f16292edb6e",
+        "endpointId": "20c5d237559148b49a93db87cc41ef74"
+      }
+    },
+```
+
+##### NexusOperationStarted
+```
+   {
+      "eventId": "14",
+      "eventTime": "2024-09-19T16:54:33.747315959Z",
+      "eventType": "EVENT_TYPE_NEXUS_OPERATION_STARTED",
+      "version": "1265",
+      "taskId": "172827115",
+      "links": [
+        {
+          "workflowEvent": {
+            "namespace": "nexus-demo-billing.a2dd6",
+            "workflowId": "Charge:856cf6a6-08c1-45ee-997c-fb4ce6da9811",
+            "runId": "7215d7b6-d559-4d0a-8548-8a6f93876cd1",
+            "eventRef": {
+              "eventType": "EVENT_TYPE_WORKFLOW_EXECUTION_STARTED"
+            }
+          }
+        }
+      ],
+      "nexusOperationStartedEventAttributes": {
+        "scheduledEventId": "13",
+        "operationId": "Charge:856cf6a6-08c1-45ee-997c-fb4ce6da9811",
+        "requestId": "b71fa8b6-54ad-4db9-993b-8f16292edb6e"
+      }
+    },
+```
+
+##### NexusOperationCompleted
+```
+    {
+      "eventId": "18",
+      "eventTime": "2024-09-19T16:54:34.276806875Z",
+      "eventType": "EVENT_TYPE_NEXUS_OPERATION_COMPLETED",
+      "version": "1265",
+      "taskId": "172827126",
+      "nexusOperationCompletedEventAttributes": {
+        "scheduledEventId": "13",
+        "result": {
+          "metadata": {
+            "encoding": "anNvbi9wbGFpbg=="
+          },
+          "data": "eyJpbnZvaWNlUmVmZXJlbmNlIjoiQTEtMTcyNjc2NDg2NzIzNjoxIiwic3ViVG90YWwiOjk4NTIsInNoaXBwaW5nIjo5NDIsInRheCI6MTk3MCwidG90YWwiOjEyNzY0LCJzdWNjZXNzIjp0cnVlLCJhdXRoQ29kZSI6IjEyMzQifQ=="
+        },
+        "requestId": "b71fa8b6-54ad-4db9-993b-8f16292edb6e"
+      }
+    },
+```
+
 #### Describe the shipping workflow to see the Nexus callback status
 
 ```
