@@ -61,7 +61,8 @@ func CreateClientOptionsFromEnv() (client.Options, error) {
 		}
 
 		clientOpts.ConnectionOptions.TLS = &tls.Config{
-			Certificates: []tls.Certificate{cert},
+			Certificates:       []tls.Certificate{cert},
+			InsecureSkipVerify: true,
 		}
 	}
 
@@ -200,10 +201,6 @@ func RunAPIServers(ctx context.Context, config config.AppConfig, client client.C
 		}
 
 		switch service {
-		case "billing":
-			g.Go(func() error {
-				return runAPIServer(ctx, port, billing.Router(client, logger), logger)
-			})
 		case "fraud":
 			g.Go(func() error {
 				return runAPIServer(ctx, port, fraud.Router(logger), logger)

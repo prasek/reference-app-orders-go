@@ -8,6 +8,8 @@
 *.so
 *.dylib
 
+temporal
+
 # Executable created by running `go build ./cmd/oms` on macOS or Linux
 /oms
 

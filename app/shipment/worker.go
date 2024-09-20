@@ -3,6 +3,7 @@ package shipment
 import (
 	"context"
 
+	"github.com/nexus-rpc/sdk-go/nexus"
 	"github.com/temporalio/reference-app-orders-go/app/config"
 	"github.com/temporalio/reference-app-orders-go/app/temporalutil"
 	"go.temporal.io/sdk/client"
@@ -17,6 +18,12 @@ type Config struct {
 // RunWorker runs a Workflow and Activity worker for the Shipment system.
 func RunWorker(ctx context.Context, config config.AppConfig, client client.Client) error {
 	w := worker.New(client, TaskQueue, worker.Options{})
+
+	s := nexus.NewService(ShipmentServiceName)
+	s.Register(
+		ProcessShipmentOperation,
+	)
+	w.RegisterNexusService(s)
 
 	w.RegisterWorkflow(Shipment)
 	w.RegisterActivity(&Activities{ShipmentURL: config.ShipmentURL})

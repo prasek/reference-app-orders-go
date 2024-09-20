@@ -8,15 +8,12 @@ import (
 	"io"
 	"net/http"
 	"strings"
-
-	"github.com/temporalio/reference-app-orders-go/app/billing"
 )
 
 // Activities implements the order package's Activities.
 // Any state shared by the worker among the activities is stored here.
 type Activities struct {
-	BillingURL string
-	OrderURL   string
+	OrderURL string
 }
 
 var a Activities
@@ -123,45 +120,4 @@ func (a *Activities) ReserveItems(_ context.Context, input *ReserveItemsInput) (
 	return &ReserveItemsResult{
 		Reservations: reservations,
 	}, nil
-}
-
-// ChargeInput is the input to the Charge activity.
-type ChargeInput = billing.ChargeInput
-
-// ChargeResult is the result of the Charge activity.
-type ChargeResult = billing.ChargeResult
-
-// Charge charges a customer for a fulfillment via the Billing API
-func (a *Activities) Charge(ctx context.Context, input *ChargeInput) (*ChargeResult, error) {
-	jsonInput, err := json.Marshal(input)
-	if err != nil {
-		return nil, fmt.Errorf("unable to encode input: %w", err)
-	}
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, a.BillingURL+"/charge", bytes.NewReader(jsonInput))
-	if err != nil {
-		return nil, fmt.Errorf("unable to build request: %w", err)
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode < 200 || res.StatusCode >= 300 {
-		body, _ := io.ReadAll(res.Body)
-		return nil, fmt.Errorf("%s: %s", http.StatusText(res.StatusCode), body)
-	}
-
-	var result ChargeResult
-
-	err = json.NewDecoder(res.Body).Decode(&result)
-	if err != nil {
-		return nil, err
-	}
-
-	return &result, nil
 }
