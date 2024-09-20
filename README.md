@@ -101,7 +101,16 @@ Goto your monolith namespace in [Temporal UI](https://cloud.temporal.io/)
 
 Open the order Workflow
 
+Select the `Compact` view
+
 Look for Nexus Operations in the order Workflow history
+
+Click on the first Nexus Operation in the event history
+
+Observe the following Nexus Operation events:
+- `NexusOperationScheduled`
+- `NexusOperationStarted`
+- `NexusOperationCompleted`
 
 
 ### Complete workflow as `Courier` role in the OMS reference app
