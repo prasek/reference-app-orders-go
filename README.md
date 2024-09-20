@@ -94,47 +94,6 @@ see Nexus Operations in Workflow history
 1. Dispatch order
 1. Deliver order
 
-### Spin up environment
-
-#### Start temporal server
-```
-./temporal server start-dev --dynamic-config-value system.enableNexus=true --http-port 7243
-```
-
-Or alternatively:
-- Launch the `Debug Server with SQLite` from https://github.com/temporalio/temporal `main`
-
-#### Bring up the rest of the environment
-
-```
-./run.sh
-```
-
-#### Optionally bring up the Temporal UI
-
-build the Temporal UI:
-```
-cd temporal-ui
-npm install
-npm run build:server
-cd ..
-```
-
-run the Temporal UI on port 3000
-```
-./run-ui.sh
-```
-
-open http://localhost:3000 for the Temporal UI
-
-and don't forget to enable Labs mode for the UI in the lower left corner!
-
-### Start a workflow to process `Order 1`
-1. open http://localhost:3001 for the demo app UI
-1. click `Customer` role
-1. click `New Order`
-1. select Order 1
-1. click `Submit Order`
 
 ### Observe the workflow state in a new terminal
 using the `temporal.sh` wrapper 
