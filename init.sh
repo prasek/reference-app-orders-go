@@ -4,17 +4,14 @@ set -x
 #if local
 rm -f ./api-store.db
 
-#if using https://github.com/prasek/docker-compose/tree/nexus
-docker volume rm -f deployments_api-data
+temporal operator namespace create --namespace order-ns
+temporal operator namespace create --namespace billing-ns
 
-./bin/temporal operator namespace create --namespace monolith
-./bin/temporal operator namespace create --namespace billing
+temporal operator nexus endpoint delete --name billing
+temporal operator nexus endpoint create --name billing --target-namespace order-ns --target-task-queue billing --description test123
 
-./bin/temporal operator nexus endpoint delete --name billing
-./bin/temporal operator nexus endpoint create --name billing --target-namespace monolith --target-task-queue billing --description test123
+temporal operator nexus endpoint delete --name shipment
+temporal operator nexus endpoint create --name shipment --target-namespace order-ns --target-task-queue shipments --description test123
 
-./bin/temporal operator nexus endpoint delete --name shipment
-./bin/temporal operator nexus endpoint create --name shipment --target-namespace monolith --target-task-queue shipments --description test123
-
-./bin/temporal operator nexus endpoint delete --name order
-./bin/temporal operator nexus endpoint create --name order --target-namespace monolith --target-task-queue orders --description test123
+temporal operator nexus endpoint delete --name order
+temporal operator nexus endpoint create --name order --target-namespace order-ns --target-task-queue orders --description test123

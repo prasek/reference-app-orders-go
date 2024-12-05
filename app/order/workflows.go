@@ -19,6 +19,12 @@ type orderImpl struct {
 	logger       log.Logger
 }
 
+/*
+We have tentative plans to include the endpoint name in a Nexus URI, so plan to restrict this to `^[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9]$` (subset of hostname RFC952) in the public preview timeframe, which will allow dashes.
+
+Use of _ in endpoint names is deprecated. We will be removing support for _ in endpoint names in public preview.
+*/
+
 // Nexus Endpoint names from the Nexus API Registry
 const NexusBillingEndpointName = "billing"
 const NexusShipmentEndpointName = "shipment"
@@ -95,6 +101,7 @@ func (wf *orderImpl) run(ctx workflow.Context, order *OrderInput) (*OrderResult,
 			return &OrderResult{Status: wf.status}, err
 		case CustomerActionTimedOut:
 			err := wf.updateStatus(ctx, OrderStatusTimedOut)
+			wf.cancelAllFulfillments()
 			return &OrderResult{Status: wf.status}, err
 		case CustomerActionAmend:
 			wf.cancelUnavailableFulfillments()
@@ -204,6 +211,14 @@ func (wf *orderImpl) cancelUnavailableFulfillments() {
 		if f.Status == FulfillmentStatusUnavailable {
 			f.Status = FulfillmentStatusCancelled
 		}
+	}
+}
+
+func (wf *orderImpl) cancelAllFulfillments() {
+	wf.logger.Info("Cancelling all fulfillments")
+
+	for _, f := range wf.fulfillments {
+		f.Status = FulfillmentStatusCancelled
 	}
 }
 

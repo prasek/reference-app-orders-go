@@ -2,5 +2,4 @@
 
 set -x
 
-./bin/temporal operator nexus endpoint delete --name billing
-./bin/temporal operator nexus endpoint create --name billing --target-namespace billing --target-task-queue billing --description test123
+temporal operator nexus endpoint update --name billing --target-namespace billing-ns --target-task-queue billing --description test123
