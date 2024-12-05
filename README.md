@@ -190,6 +190,12 @@ Verify the 2nd order Workflow has completed successfully.
 
 You've successfully decomposed the monolith!!!
 
+Note: to run the demo with a clean slate, you can reset the database:
+
+```
+./reset.sh
+```
+
 # Extra Credit
 
 ### Observe the workflow state in a new terminal
