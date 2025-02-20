@@ -91,6 +91,10 @@ var ChargeOperation = temporalnexus.NewWorkflowRunOperation(
 	ChargeOperationName,
 	Charge,
 	func(ctx context.Context, input *ChargeInput, soo nexus.StartOperationOptions) (client.StartWorkflowOptions, error) {
-		return client.StartWorkflowOptions{ID: ChargeWorkflowID(*input)}, nil
+		return client.StartWorkflowOptions{
+			ID:               ChargeWorkflowID(*input),
+			EnableEagerStart: true,
+			TaskQueue:        "billing",
+		}, nil
 	},
 )
