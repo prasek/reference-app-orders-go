@@ -7,7 +7,6 @@ import (
 	"github.com/temporalio/reference-app-orders-go/app/config"
 	"github.com/temporalio/reference-app-orders-go/app/temporalutil"
 	"go.temporal.io/sdk/client"
-	"go.temporal.io/sdk/temporalnexus"
 	"go.temporal.io/sdk/worker"
 )
 
@@ -17,7 +16,7 @@ func RunWorker(ctx context.Context, config config.AppConfig, client client.Clien
 
 	s := nexus.NewService(OrderServiceName)
 	s.Register(
-		temporalnexus.NewSyncOperation(ShipmentNotificationOperationName, nh.handleShippingUpdateNotification),
+		nexus.NewSyncOperation(ShipmentNotificationOperationName, nh.handleShippingUpdateNotification),
 	)
 	w.RegisterNexusService(s)
 	w.RegisterWorkflow(Order)

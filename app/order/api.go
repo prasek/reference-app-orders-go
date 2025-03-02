@@ -15,6 +15,7 @@ import (
 	"go.temporal.io/api/serviceerror"
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/log"
+	"go.temporal.io/sdk/temporalnexus"
 )
 
 // TaskQueue is the default task queue for the Order system.
@@ -204,7 +205,8 @@ type NexusHandlers struct{}
 
 var nh NexusHandlers
 
-func (nh *NexusHandlers) handleShippingUpdateNotification(ctx context.Context, c client.Client, input shipment.ShipmentStatusNotification, soo nexus.StartOperationOptions) (nexus.NoValue, error) {
+func (nh *NexusHandlers) handleShippingUpdateNotification(ctx context.Context, input shipment.ShipmentStatusNotification, soo nexus.StartOperationOptions) (nexus.NoValue, error) {
+	c := temporalnexus.GetClient(ctx)
 	return nil, c.SignalWorkflow(ctx, input.CallerID, "", shipmentNotificationSignalName, input)
 }
 
