@@ -97,8 +97,8 @@ func Test_Order(t *testing.T) {
 
 	fraudAPI := httptest.NewServer(fraud.Router(logger))
 	defer fraudAPI.Close()
-	billingAPI := httptest.NewServer(billing.Router(c, logger))
-	defer billingAPI.Close()
+
+	//TODO: add Billing Nexus for testing
 
 	db, err := sqlx.Open("sqlite", ":memory:")
 	require.NoError(t, err)
@@ -111,7 +111,6 @@ func Test_Order(t *testing.T) {
 	defer shipmentAPI.Close()
 
 	config := config.AppConfig{
-		BillingURL:  billingAPI.URL,
 		OrderURL:    orderAPI.URL,
 		ShipmentURL: shipmentAPI.URL,
 		FraudURL:    fraudAPI.URL,

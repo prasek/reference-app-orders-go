@@ -19,9 +19,12 @@ func TestOrderWorkflow(t *testing.T) {
 	var a *order.Activities
 
 	env.RegisterActivity(a.ReserveItems)
+
+	/* TODO: add Nexus test support
 	env.OnActivity(a.Charge, mock.Anything, mock.Anything).Return(func(ctx context.Context, input *order.ChargeInput) (*order.ChargeResult, error) {
 		return &order.ChargeResult{Success: true}, nil
 	})
+	*/
 	env.OnActivity(a.UpdateOrderStatus, mock.Anything, mock.Anything).Return(func(ctx context.Context, input *order.OrderStatusUpdate) error {
 		return nil
 	})
@@ -56,24 +59,31 @@ func TestOrderShipmentStatus(t *testing.T) {
 	var a *order.Activities
 
 	env.RegisterActivity(a.ReserveItems)
+
+	/* TODO: add Nexus test support
 	env.OnActivity(a.Charge, mock.Anything, mock.Anything).Return(func(ctx context.Context, input *order.ChargeInput) (*order.ChargeResult, error) {
 		return &order.ChargeResult{Success: true}, nil
 	})
+	*/
 	env.OnActivity(a.UpdateOrderStatus, mock.Anything, mock.Anything).Return(func(ctx context.Context, input *order.OrderStatusUpdate) error {
 		return nil
 	})
-	env.OnWorkflow(shipment.Shipment, mock.Anything, mock.Anything).Return(func(ctx workflow.Context, input *shipment.ShipmentInput) (*shipment.ShipmentResult, error) {
-		env.SignalWorkflow(
-			shipment.ShipmentStatusUpdatedSignalName,
-			shipment.ShipmentStatusUpdatedSignal{
-				ShipmentID: input.ID,
-				Status:     shipment.ShipmentStatusDelivered,
-				UpdatedAt:  env.Now(),
-			},
-		)
 
-		return &shipment.ShipmentResult{CourierReference: "test"}, nil
-	}).Times(2)
+	/*
+		TODO: Imporved Nexus test mock support
+		env.OnWorkflow(shipment.Shipment, mock.Anything, mock.Anything).Return(func(ctx workflow.Context, input *shipment.ShipmentInput) (*shipment.ShipmentResult, error) {
+			env.SignalWorkflow(
+				shipment.ShipmentStatusUpdatedSignalName,
+				shipment.ShipmentStatusUpdatedSignal{
+					ShipmentID: input.ID,
+					Status:     shipment.ShipmentStatusDelivered,
+					UpdatedAt:  env.Now(),
+				},
+			)
+
+			return &shipment.ShipmentResult{CourierReference: "test"}, nil
+		}).Times(2)
+	*/
 
 	orderInput := order.OrderInput{
 		ID:         "1234",
@@ -109,9 +119,12 @@ func TestOrderAmendWithUnavailableItems(t *testing.T) {
 	var a *order.Activities
 
 	env.RegisterActivity(a.ReserveItems)
+
+	/* TODO: add Nexus test support
 	env.OnActivity(a.Charge, mock.Anything, mock.Anything).Return(func(ctx context.Context, input *order.ChargeInput) (*order.ChargeResult, error) {
 		return &order.ChargeResult{Success: true}, nil
 	})
+	*/
 	env.OnActivity(a.UpdateOrderStatus, mock.Anything, mock.Anything).Return(func(ctx context.Context, input *order.OrderStatusUpdate) error {
 		return nil
 	})
