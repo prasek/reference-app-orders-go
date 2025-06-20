@@ -3,6 +3,7 @@ package billing
 import (
 	"context"
 
+	"github.com/nexus-rpc/sdk-go/nexus"
 	"github.com/temporalio/reference-app-orders-go/app/config"
 	"github.com/temporalio/reference-app-orders-go/app/temporalutil"
 	"go.temporal.io/sdk/client"
@@ -12,6 +13,12 @@ import (
 // RunWorker runs a Workflow and Activity worker for the Billing system.
 func RunWorker(ctx context.Context, config config.AppConfig, client client.Client) error {
 	w := worker.New(client, TaskQueue, worker.Options{})
+
+	s := nexus.NewService(BillingServiceName)
+	s.Register(
+		ChargeOperation,
+	)
+	w.RegisterNexusService(s)
 
 	w.RegisterWorkflow(Charge)
 	w.RegisterActivity(&Activities{FraudCheckURL: config.FraudURL})

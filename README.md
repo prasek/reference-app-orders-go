@@ -1,4 +1,391 @@
-# Temporal Reference Application: Order Management System (Go)
+# Nexus demo
+
+### Prerequisites
+- Golang 1.22+
+- [pnpm](https://pnpm.io/installation)
+
+### Demo app
+```
+git clone https://github.com/prasek/reference-app-orders-go.git
+git clone https://github.com/prasek/reference-app-orders-web.git
+
+cd reference-app-orders-go
+
+git checkout nexus
+```
+
+#### Download latest temporal CLI
+
+Download the [latest temporal CLI](https://github.com/temporalio/cli/tags):
+
+```
+brew install temporal
+```
+
+### Start Temporal Dev Server
+
+```
+./server.sh
+```
+
+### Create Namespaces and Nexus Endpoints
+
+Create the Namespace and Endpoints using `temporal` see [./init.sh](init.sh):
+```
+./init.sh
+```
+
+Change the endpoint names the ones you created above at L23-25 in `reference-app-orders-go/app/order/workflow.go`
+
+### Bring up the demo app components
+
+in `reference-app-orders-go` open separate terminal windows
+
+window 1:
+```
+./run.sh worker
+```
+
+window 2:
+```
+./run.sh api
+```
+
+window 3:
+```
+./run.sh web
+```
+
+In the console Find the demo app UI web URL and open it
+in an browser which is typically http://localhost:5173
+
+### Start a workflow to process `Order 1`
+1. open demo app UI, typically http://localhost:5173
+1. click `Customer` role
+1. click `New Order`
+1. select Order 1
+1. click `Submit`
+
+### View Workflows and Nexus Operations in Temporal Cloud UI
+
+Goto your `orders-ns` namespace in the [Temporal UI](http://localhost:8233)
+
+Open the order Workflow
+
+Select the `Compact` view
+
+Look for Nexus Operations in the order Workflow history
+
+Click on the first Nexus Operation in the event history
+
+Observe the following Nexus Operation events:
+- `NexusOperationScheduled`
+- `NexusOperationStarted`
+- `NexusOperationCompleted`
+
+
+### Complete workflow as `Courier` role in the OMS reference app
+
+1. Dispatch order
+1. Deliver order
+
+
+# Decompose the monolith
+
+### Update billing endpoint to point to the `billing-ns`
+```
+./update-billing-endpoint.sh
+```
+
+### Split out separate billing worker
+
+Stop `./run.sh worker`
+
+window 1 using monolith namespace
+```
+./run.sh worker --services order,shipment
+```
+
+window 2 using billing namespace (see ./setEnv.sh)
+```
+TEMPORAL_ENV=billing ./run.sh worker --services billing
+```
+
+### Place another order in the OMS reference app and verify it still works
+
+1. open demo app UI, typically http://localhost:5173
+1. click `Customer` role
+1. click `New Order`
+1. select Order 1
+1. click `Submit`
+
+### View Workflows and Nexus Operations in Temporal Cloud UI
+
+Goto your monolith namespace in [Temporal UI](https://cloud.temporal.io/)
+
+Open the 2nd order Workflow
+
+Look for Nexus Operations in the order Workflow history
+
+Find the `NexusOperationStarted` event and click the link to navigate to the charge Workflow
+
+Find the `WorkflowExecutionStarted` event in the charge Workflow and click the link to navigate back to the order Workflow
+
+You have now traversed a Nexus bi-direction link!
+
+
+### Complete workflow as `Courier` role in the OMS reference app
+
+1. Dispatch order
+1. Deliver order
+
+Verify the 2nd order Workflow has completed successfully.
+
+# Done!
+
+You've successfully decomposed the monolith!!!
+
+Note: to run the demo with a clean slate, you can reset the database:
+
+```
+./reset.sh
+```
+
+# Extra Credit
+
+### Observe the workflow state in a new terminal
+using the `temporal.sh` wrapper 
+
+```
+./temporal.sh workflow list
+```
+
+#### Look at history for the `Order` workflow
+
+```
+./temporal.sh workflow show -w <order workflow>
+```
+
+which will show:
+```
++ temporal workflow show -w Order:A1-1726764867236
+Progress:
+  ID           Time                     Type
+    1  2024-09-19T16:54:33Z  WorkflowExecutionStarted
+    2  2024-09-19T16:54:33Z  WorkflowTaskScheduled
+    3  2024-09-19T16:54:33Z  WorkflowTaskStarted
+    4  2024-09-19T16:54:33Z  WorkflowTaskCompleted
+    5  2024-09-19T16:54:33Z  ActivityTaskScheduled
+    6  2024-09-19T16:54:33Z  ActivityTaskStarted
+    7  2024-09-19T16:54:33Z  ActivityTaskCompleted
+    8  2024-09-19T16:54:33Z  WorkflowTaskScheduled
+    9  2024-09-19T16:54:33Z  WorkflowTaskStarted
+   10  2024-09-19T16:54:33Z  WorkflowTaskCompleted
+   11  2024-09-19T16:54:33Z  MarkerRecorded
+   12  2024-09-19T16:54:33Z  MarkerRecorded
+   13  2024-09-19T16:54:33Z  NexusOperationScheduled
+   14  2024-09-19T16:54:33Z  NexusOperationStarted
+   15  2024-09-19T16:54:33Z  WorkflowTaskScheduled
+   16  2024-09-19T16:54:33Z  WorkflowTaskStarted
+   17  2024-09-19T16:54:33Z  WorkflowTaskCompleted
+   18  2024-09-19T16:54:34Z  NexusOperationCompleted
+   19  2024-09-19T16:54:34Z  WorkflowTaskScheduled
+   20  2024-09-19T16:54:34Z  WorkflowTaskStarted
+   21  2024-09-19T16:54:34Z  WorkflowTaskCompleted
+   22  2024-09-19T16:54:34Z  NexusOperationScheduled
+   23  2024-09-19T16:54:34Z  NexusOperationStarted
+   24  2024-09-19T16:54:34Z  WorkflowTaskScheduled
+   25  2024-09-19T16:54:34Z  WorkflowTaskStarted
+   26  2024-09-19T16:54:34Z  WorkflowTaskCompleted
+   27  2024-09-19T16:54:34Z  WorkflowExecutionSignaled
+   28  2024-09-19T16:54:34Z  WorkflowTaskScheduled
+   29  2024-09-19T16:54:35Z  WorkflowTaskStarted
+   30  2024-09-19T16:54:35Z  WorkflowTaskCompleted
+   31  2024-09-19T16:56:37Z  WorkflowExecutionSignaled
+   32  2024-09-19T16:56:37Z  WorkflowTaskScheduled
+   33  2024-09-19T16:56:37Z  WorkflowTaskStarted
+   34  2024-09-19T16:56:37Z  WorkflowTaskCompleted
+   35  2024-09-19T16:56:38Z  WorkflowExecutionSignaled
+   36  2024-09-19T16:56:38Z  WorkflowTaskScheduled
+   37  2024-09-19T16:56:38Z  WorkflowTaskStarted
+   38  2024-09-19T16:56:38Z  WorkflowTaskCompleted
+   39  2024-09-19T16:56:38Z  NexusOperationCompleted
+   40  2024-09-19T16:56:38Z  WorkflowTaskScheduled
+   41  2024-09-19T16:56:38Z  WorkflowTaskStarted
+   42  2024-09-19T16:56:38Z  WorkflowTaskCompleted
+   43  2024-09-19T16:56:38Z  MarkerRecorded
+   44  2024-09-19T16:56:38Z  WorkflowExecutionCompleted
+```
+
+or the JSON output
+```
+./temporal.sh workflow show --output json -w <order workflow>
+```
+
+which will show:
+
+##### NexusOperationScheduled
+```
+   {
+      "eventId": "13",
+      "eventTime": "2024-09-19T16:54:33.471317119Z",
+      "eventType": "EVENT_TYPE_NEXUS_OPERATION_SCHEDULED",
+      "version": "1265",
+      "taskId": "172827111",
+      "nexusOperationScheduledEventAttributes": {
+        "endpoint": "billing",
+        "service": "billing",
+        "operation": "charge",
+        "input": {
+          "metadata": {
+            "encoding": "anNvbi9wbGFpbg=="
+          },
+          "data": "eyJjdXN0b21lcklkIjoiMTIzNCIsIm9yZGVyUmVmZXJlbmNlIjoiQTEtMTcyNjc2NDg2NzIzNjoxIiwiaXRlbXMiOlt7InNrdSI6IlZhbnMgT2xkIFNrb29sIiwicXVhbnRpdHkiOjF9XSwiaWRlbXBvdGVuY3lLZXkiOiI4NTZjZjZhNi0wOGMxLTQ1ZWUtOTk3Yy1mYjRjZTZkYTk4MTEifQ=="
+        },
+        "scheduleToCloseTimeout": "3600s",
+        "workflowTaskCompletedEventId": "10",
+        "requestId": "b71fa8b6-54ad-4db9-993b-8f16292edb6e",
+        "endpointId": "20c5d237559148b49a93db87cc41ef74"
+      }
+    },
+```
+
+##### NexusOperationStarted
+```
+   {
+      "eventId": "14",
+      "eventTime": "2024-09-19T16:54:33.747315959Z",
+      "eventType": "EVENT_TYPE_NEXUS_OPERATION_STARTED",
+      "version": "1265",
+      "taskId": "172827115",
+      "links": [
+        {
+          "workflowEvent": {
+            "namespace": "nexus-demo-billing.a2dd6",
+            "workflowId": "Charge:856cf6a6-08c1-45ee-997c-fb4ce6da9811",
+            "runId": "7215d7b6-d559-4d0a-8548-8a6f93876cd1",
+            "eventRef": {
+              "eventType": "EVENT_TYPE_WORKFLOW_EXECUTION_STARTED"
+            }
+          }
+        }
+      ],
+      "nexusOperationStartedEventAttributes": {
+        "scheduledEventId": "13",
+        "operationId": "Charge:856cf6a6-08c1-45ee-997c-fb4ce6da9811",
+        "requestId": "b71fa8b6-54ad-4db9-993b-8f16292edb6e"
+      }
+    },
+```
+
+##### NexusOperationCompleted
+```
+    {
+      "eventId": "18",
+      "eventTime": "2024-09-19T16:54:34.276806875Z",
+      "eventType": "EVENT_TYPE_NEXUS_OPERATION_COMPLETED",
+      "version": "1265",
+      "taskId": "172827126",
+      "nexusOperationCompletedEventAttributes": {
+        "scheduledEventId": "13",
+        "result": {
+          "metadata": {
+            "encoding": "anNvbi9wbGFpbg=="
+          },
+          "data": "eyJpbnZvaWNlUmVmZXJlbmNlIjoiQTEtMTcyNjc2NDg2NzIzNjoxIiwic3ViVG90YWwiOjk4NTIsInNoaXBwaW5nIjo5NDIsInRheCI6MTk3MCwidG90YWwiOjEyNzY0LCJzdWNjZXNzIjp0cnVlLCJhdXRoQ29kZSI6IjEyMzQifQ=="
+        },
+        "requestId": "b71fa8b6-54ad-4db9-993b-8f16292edb6e"
+      }
+    },
+```
+
+#### Describe the shipping workflow to see the Nexus callback status
+
+```
+./temporal.sh workflow describe -w <shipping workflow>
+```
+
+1. ensure `NexusOperationScheduled` is reported in the caller's workflow history
+   - it should start the underlying `Charge` workflow
+1. ensure `NexusOperationStarted` is reported in the caller's workflow history
+   - verify the `Charge` workflow completes successfully
+1. ensure `NexusOperationCompleted` is reported in the Order workflow history
+   - should indicate the underlying `Charge` workflow was completed successfully
+1. ensure shipping workflow reports
+
+```
+Callbacks: 1
+
+  URL               https://nexus.nexus-demo-monolith.a2dd6.cluster.tmprl.cloud:7243/namespaces/nexus-demo-monolith.a2dd6/nexus/callback
+  Trigger           WorkflowClosed
+  State             Succeeded
+  Attempt           1
+  RegistrationTime  6 minutes ago
+
+
+Results:
+  RunTime         6m53.85s
+  Status          COMPLETED
+  Result          {"CourierReference":"A1-1721334713213:1:1234"}
+  ResultEncoding  json/plain
+```
+
+## ⚠️  Experimental: Nexus Endpoint with an external target URL 
+
+As [noted in the Temporal Documentation](https://docs.temporal.io/nexus/endpoints#reverse-proxy-for-nexus-services-not-a-general-purpose-l7-proxy),
+Temporal Workflows in one Cluster can target a remote/external Nexus Endpoint
+using a local Nexus Endpoint wth an `External` target URL.
+
+The [`temporal operator nexus endpoint create` command provides an experimental `--target-url`](https://docs.temporal.io/cli/operator#create-1) flag for this purpose, that can be used as follows:
+```
+# create a local proxy Nexus Endpoint that targets an external `--target-url`
+
+temporal operator nexus endpoint create \
+  --name billing \
+  --target-url "http://$HOST:$PORT/nexus/endpoints/$ENDPOINT_ID/services" \
+  --description test123
+```
+
+Which results in:
+
+```
++ temporal operator nexus endpoint get --name billing
+  ID                       043e0894-bd71-439f-81ba-223e6b6765dd
+  Name                     billing
+  CreatedTime              "2025-06-20T23:14:28.367208Z"
+  LastModifiedTime         <nil>
+  Target.External.URL      http://localhost:7243/nexus/endpoints/6f08a12a-7746-4685-b712-6128609a0710/services
+  Target.Worker.Namespace
+  Target.Worker.TaskQueue
+  Description              test123
+```
+
+The [./proxy-billing-endpoint.sh](proxy-billing-endpoint.sh) script does the following:
+
+- Creates a remote Nexus Endpoint (`billing-remote`) and extracts the generated Endpoint `ID`
+- Creates a local proxy Nexus Endpoint (`billing`) that references the remote via `--target-url`
+
+### Demo: Insert a local Nexus Endpoint proxy that uses an `External` target.
+
+1. Complete the [Decompose the monolith](#decompose-the-monolith) demo steps.
+2. Ensure the [billing worker has been split out](#split-out-separate-billing-worker) to poll the `billing-ns`.
+3. Run the following script to insert a local `billing` proxy:
+
+```
+./proxy-billing-endpoint.sh
+```
+
+3. Submit a new order.
+4. Verify the billing Nexus Operation completed successfully using the local proxy `billing` Nexus Endpoint that uses an `External` target URL for the remote `billing-remote` Nexus Endpoint.
+
+### Experimental Limitations
+- Nexus Endpoint with an `External` target doesn't render in the UI
+- Bi-directional Links do not work when targeting a remote cluster.
+
+---
+
+
+# Appendix - Original Reference App Docs
 
 ![OMS logo](docs/images/oms-logo.png)
 
@@ -19,7 +406,18 @@ running the application in various environments.
 If you'd like to jump right in and run the OMS locally, clone this 
 repository to your machine and follow the steps below. Unless otherwise 
 noted, you should execute the commands from the root directory of your 
-clone.
+clone. 
+
+You can also see a demonstration of these steps in the _[Setting
+up and running the OMS](https://www.youtube.com/watch?v=ltlC7kVdFEU&list=PLl9kRkvFJrlRNbBZYY9v1XaAjqb2oj8pv&index=2)_ video, part of a [four-part video series](https://www.youtube.com/playlist?v=ltlC7kVdFEU&list=PLl9kRkvFJrlRNbBZYY9v1XaAjqb2oj8pv) that covers the OMS.
+
+### Required Software
+You will need [Go](https://go.dev/) to run the core OMS application, 
+the [Temporal CLI](https://docs.temporal.io/cli#install) to run the 
+Temporal Service locally, plus [Node.js](https://nodejs.org/) and 
+the [pnpm](https://pnpm.io/) package manager to run the OMS web 
+application. 
+
 
 ### Start the Temporal Service
 Run the following command in your terminal:
