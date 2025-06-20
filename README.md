@@ -330,6 +330,60 @@ Results:
   ResultEncoding  json/plain
 ```
 
+## ⚠️  Experimental: Nexus Endpoint with an external target URL 
+
+As [noted in the Temporal Documentation](https://docs.temporal.io/nexus/endpoints#reverse-proxy-for-nexus-services-not-a-general-purpose-l7-proxy),
+Temporal Workflows in one Cluster can target a remote/external Nexus Endpoint
+using a local Nexus Endpoint wth an `External` target URL.
+
+The [`temporal operator nexus endpoint create` command provides an experimental `--target-url`](https://docs.temporal.io/cli/operator#create-1) flag for this purpose, that can be used as follows:
+```
+# create a local proxy Nexus Endpoint that targets an external `--target-url`
+
+temporal operator nexus endpoint create \
+  --name billing \
+  --target-url "http://$HOST:$PORT/nexus/endpoints/$ENDPOINT_ID/services" \
+  --description test123
+```
+
+Which results in:
+
+```
++ temporal operator nexus endpoint get --name billing
+  ID                       043e0894-bd71-439f-81ba-223e6b6765dd
+  Name                     billing
+  CreatedTime              "2025-06-20T23:14:28.367208Z"
+  LastModifiedTime         <nil>
+  Target.External.URL      http://localhost:7243/nexus/endpoints/6f08a12a-7746-4685-b712-6128609a0710/services
+  Target.Worker.Namespace
+  Target.Worker.TaskQueue
+  Description              test123
+```
+
+The [./proxy-billing-endpoint.sh](proxy-billing-endpoint.sh) script does the following:
+
+- Creates a remote Nexus Endpoint (`billing-remote`) and extracts the generated Endpoint `ID`
+- Creates a local proxy Nexus Endpoint (`billing`) that references the remote via `--target-url`
+
+### Demo: Insert a local Nexus Endpoint proxy that uses an `External` target.
+
+1. Complete the [Decompose the monolith](#decompose-the-monolith) demo steps.
+2. Ensure the [billing worker has been split out](#split-out-separate-billing-worker) to poll the `billing-ns`.
+3. Run the following script to insert a local `billing` proxy:
+
+```
+./proxy-billing-endpoint.sh
+```
+
+3. Submit a new order.
+4. Verify the billing Nexus Operation completed successfully using the local proxy `billing` Nexus Endpoint that uses an `External` target URL for the remote `billing-remote` Nexus Endpoint.
+
+### Experimental Limitations
+- Nexus Endpoint with an `External` target doesn't render in the UI
+- Bi-directional Links do not work when targeting a remote cluster.
+
+---
+
 
 # Appendix - Original Reference App Docs
 
